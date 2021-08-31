@@ -27,6 +27,35 @@ class LabelInput(tk.Frame):
     def grid(self, sticky=(tk.E + tk.W), **kwargs):
         super().grid(sticky=sticky, **kwargs)
 
+    def get(self):
+        try:
+            if self.variable:
+                return self.variable.get()
+            elif type(self.input) == tk.Text:
+                return self.input.get('1.0', tk.END)
+            else:
+                return self.input.get()
+        except (TypeError, tk.TclError):
+            # happens when numeric fields are empty
+            return ''
+
+    def set(self, value, *args, **kwargs):
+        if type(self.variable) == tk.BooleanVar:
+            self.variable.set(bool(value))
+        elif self.variable:
+            self.variable.set(value, *args, **kwargs)
+        elif type(self.input) in (ttk.Checkbutton, ttk.Radiobutton):
+            if value:
+                self.input.select()
+            else:
+                self.input.deselect()
+        elif type(self.input) == tk.Text:
+            self.input.delete('1.0', tk.END)
+            self.input.insert('1.0', value)
+        else:  # input must be an Entry-type widget with no variable
+            self.input.delete(0, tk.END)
+            self.input.insert('1.0', value)
+
 
 class Application(tk.Tk):
     '''Application root window'''
