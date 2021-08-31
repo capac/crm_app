@@ -20,6 +20,13 @@ class LabelInput(tk.Frame):
             self.label.grid(row=0, column=0, sticky=(tk.W + tk.E))
             input_args['textvariable'] = input_var
 
+        self.input = input_class(self, **input_args)
+        self.input.grid(row=1, column=0, sticky=(tk.E + tk.W))
+        self.columnconfigure(0, weight=1)
+
+    def grid(self, sticky=(tk.E + tk.W), **kwargs):
+        super().grid(sticky=sticky, **kwargs)
+
 
 class Application(tk.Tk):
     '''Application root window'''
