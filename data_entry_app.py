@@ -57,6 +57,15 @@ class LabelInput(tk.Frame):
             self.input.insert('1.0', value)
 
 
+class DataRecordForm(tk.Frame):
+    '''The input form for our widgets'''
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        # a dictionary to keep track of input widgets
+        self.inputs = {}
+
+
 class Application(tk.Tk):
     '''Application root window'''
 
