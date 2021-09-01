@@ -62,8 +62,54 @@ class DataRecordForm(tk.Frame):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.reset()
+
         # a dictionary to keep track of input widgets
         self.inputs = {}
+        officeinfo = tk.LabelFrame(self, text='Office information')
+        # Office information
+        self.inputs['prop_id'] = LabelInput(officeinfo, 'Property ID', input_var=tk.StringVar())
+        self.inputs['prop_id'].grid(row=0, column=0)
+        self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company',
+                                                     input_class=ttk.Combobox,
+                                                     input_var=tk.StringVar(),
+                                                     input_args={'values': ['Wood 7', 'JR 1',
+                                                                            'SSC 1', 'CAV 1',
+                                                                            'RIFF 1']})
+        self.inputs['landlord_company'].grid(row=0, column=1)
+        officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
+
+        # Property information
+        propertyinfo = tk.LabelFrame(self, text='Property information')
+        self.inputs['flat_num'] = LabelInput(propertyinfo, 'Flat #', input_var=tk.StringVar())
+        self.inputs['flat_num'].grid(row=0, column=0)
+        self.inputs['address'] = LabelInput(propertyinfo, 'Address', input_var=tk.StringVar())
+        self.inputs['address'].grid(row=0, column=1)
+        self.inputs['post_code'] = LabelInput(propertyinfo, 'Post code', input_var=tk.StringVar())
+        self.inputs['post_code'].grid(row=0, column=2)
+        self.inputs['city'] = LabelInput(propertyinfo, 'City', input_var=tk.StringVar())
+        self.inputs['city'].grid(row=0, column=3)
+        propertyinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
+
+        # Tenant information
+        tenantinfo = tk.LabelFrame(self, text='Tenant information')
+        self.inputs['first_name'] = LabelInput(tenantinfo, 'First name', input_var=tk.StringVar())
+        self.inputs['first_name'].grid(row=0, column=0)
+        self.inputs['last_name'] = LabelInput(tenantinfo, 'Last name', input_var=tk.StringVar())
+        self.inputs['last_name'].grid(row=0, column=1)
+        self.inputs['email'] = LabelInput(tenantinfo, 'Email', input_var=tk.StringVar())
+        self.inputs['email'].grid(row=0, column=2)
+        tenantinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
+
+    def get(self):
+        data = {}
+        for key, widget in self.inputs.items():
+            data[key] = widget.get()
+        return data
+
+    def reset(self):
+        for widget in self.inputs.values():
+            widget.set('')
 
 
 class Application(tk.Tk):
