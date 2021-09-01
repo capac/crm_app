@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+from datetime import datetime
+import os
+import csv
 
 
 class LabelInput(tk.Frame):
@@ -62,26 +65,38 @@ class DataRecordForm(tk.Frame):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.reset()
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
+        self.prop_ids = ['JR '+str(index) for index in range(1, 8)] + \
+                        ['SSC '+str(index) for index in range(1, 17)] + ['SSC A'] + \
+                        ['1LYM  '+str(index) for index in range(1, 18)] + \
+                        ['12LYM '+str(index) for index in range(1, 15)] + \
+                        ['CAV '+str(index) for index in range(1, 10)] + \
+                        ['CAV '+str(index) for index in ['A', 'B', 'C', 'D']] + \
+                        ['STJ '+str(index) for index in range(1, 10)] + ['STJ A'] + \
+                        ['SARRE '+str(index) for index in range(1, 5)] + \
+                        ['RIFF '+str(index) for index in range(1, 8)] + \
+                        ['WOOD '+str(index) for index in range(1, 13)] + \
+                        ['WOOD '+str(index) for index in range(14, 15)]
         officeinfo = tk.LabelFrame(self, text='Office information')
         # Office information
-        self.inputs['prop_id'] = LabelInput(officeinfo, 'Property ID', input_var=tk.StringVar())
+        self.inputs['prop_id'] = LabelInput(officeinfo, 'Property ID',
+                                            input_class=ttk.Combobox,
+                                            input_var=tk.StringVar(),
+                                            input_args={'values': self.prop_ids})
+
         self.inputs['prop_id'].grid(row=0, column=0)
         self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company',
                                                      input_class=ttk.Combobox,
                                                      input_var=tk.StringVar(),
-                                                     input_args={'values': ['Wood 7', 'JR 1',
-                                                                            'SSC 1', 'CAV 1',
-                                                                            'RIFF 1']})
+                                                     input_args={'values': ['CF1', 'COID']})
         self.inputs['landlord_company'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
         # Property information
         propertyinfo = tk.LabelFrame(self, text='Property information')
-        self.inputs['flat_num'] = LabelInput(propertyinfo, 'Flat #', input_var=tk.StringVar())
+        self.inputs['flat_num'] = LabelInput(propertyinfo, 'Flat number', input_var=tk.StringVar())
         self.inputs['flat_num'].grid(row=0, column=0)
         self.inputs['address'] = LabelInput(propertyinfo, 'Address', input_var=tk.StringVar())
         self.inputs['address'].grid(row=0, column=1)
@@ -89,7 +104,7 @@ class DataRecordForm(tk.Frame):
         self.inputs['post_code'].grid(row=0, column=2)
         self.inputs['city'] = LabelInput(propertyinfo, 'City', input_var=tk.StringVar())
         self.inputs['city'].grid(row=0, column=3)
-        propertyinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
+        propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # Tenant information
         tenantinfo = tk.LabelFrame(self, text='Tenant information')
@@ -99,7 +114,10 @@ class DataRecordForm(tk.Frame):
         self.inputs['last_name'].grid(row=0, column=1)
         self.inputs['email'] = LabelInput(tenantinfo, 'Email', input_var=tk.StringVar())
         self.inputs['email'].grid(row=0, column=2)
-        tenantinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
+        tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
+
+        # set default tk entry values to empty strings
+        self.reset()
 
     def get(self):
         data = {}
@@ -114,6 +132,38 @@ class DataRecordForm(tk.Frame):
 
 class Application(tk.Tk):
     '''Application root window'''
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # application title
+        self.title('Data Entry Form')
+        self.resizable(width=False, height=False)
+        # application name
+        ttk.Label(self, text='Chalk Farm Investment Data Entry Form', font=('TkDefaultFont', 16)).grid(row=0)
+        # data form
+        self.recordform = DataRecordForm(self)
+        self.recordform.grid(row=1, padx=10)
+        # save button
+        self.savebutton = ttk.Button(self, text='Save', command=self.on_save)
+        self.savebutton.grid(row=2, padx=10, pady=(5, 0), sticky=(tk.E))
+        # status bar
+        self.status = tk.StringVar()
+        self.statusbar = ttk.Label(self, textvariable=self.status)
+        self.statusbar.grid(row=3, padx=10, sticky=(tk.W + tk.E))
+
+    def on_save(self):
+        datestring = datetime.today().strftime('%Y-%m-%d')
+        filename = f'data_record_{datestring}.csv'
+        # does the file exist?
+        newfile = not os.path.exists(filename)
+        # get data
+        data = self.recordform.get()
+        # save to file
+        with open(filename, 'a') as fh:
+            csvwriter = csv.DictWriter(fh, fieldnames=data.keys())
+            if newfile:
+                csvwriter.writeheader()
+            csvwriter.writerow(data)
 
 
 if __name__ == '__main__':
