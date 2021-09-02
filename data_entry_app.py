@@ -149,11 +149,11 @@ class Application(tk.Tk):
         self.recordform.grid(row=1, padx=10)
         # save button
         self.savebutton = ttk.Button(self, text='Save to CSV', command=self.on_save)
-        self.savebutton.grid(row=2, padx=10, pady=(5, 0), sticky=(tk.E))
+        self.savebutton.grid(row=2, padx=10, pady=(10, 0), sticky=(tk.E))
         # status bar
         self.status = tk.StringVar()
         self.statusbar = ttk.Label(self, textvariable=self.status)
-        self.statusbar.grid(row=3, padx=10, pady=(0, 5), sticky=(tk.W + tk.E))
+        self.statusbar.grid(row=3, padx=10, pady=(0, 10), sticky=(tk.W + tk.E))
         self.records_saved = 0
 
     def on_save(self):
