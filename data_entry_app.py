@@ -80,17 +80,14 @@ class DataRecordForm(tk.Frame):
                         ['WOOD '+str(index) for index in range(1, 13)] + \
                         ['WOOD '+str(index) for index in range(14, 15)]
         officeinfo = tk.LabelFrame(self, text='Office information')
+
         # Office information
         self.inputs['prop_id'] = LabelInput(officeinfo, 'Property ID',
                                             input_class=ttk.Combobox,
                                             input_var=tk.StringVar(),
                                             input_args={'values': self.prop_ids})
-
         self.inputs['prop_id'].grid(row=0, column=0)
-        self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company',
-                                                     input_class=ttk.Combobox,
-                                                     input_var=tk.StringVar(),
-                                                     input_args={'values': ['CF1', 'COID']})
+        self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company', input_var=tk.StringVar())
         self.inputs['landlord_company'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
