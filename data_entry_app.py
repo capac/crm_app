@@ -116,7 +116,7 @@ class DataRecordForm(tk.Frame):
         emaildocumentinfo = tk.LabelFrame(self, text='Document information')
         self.inputs['email_documents'] = LabelInput(emaildocumentinfo, 'List of documents sent by email',
                                                     input_class=tk.Text,
-                                                    input_args={'width': 120, 'height': 10})
+                                                    input_args={'width': 110, 'height': 10})
         self.inputs['email_documents'].grid(row=0, column=0)
         emaildocumentinfo.grid(row=3, column=0, sticky=(tk.W + tk.E))
 
@@ -148,12 +148,13 @@ class Application(tk.Tk):
         self.recordform = DataRecordForm(self)
         self.recordform.grid(row=1, padx=10)
         # save button
-        self.savebutton = ttk.Button(self, text='Save', command=self.on_save)
+        self.savebutton = ttk.Button(self, text='Save to CSV', command=self.on_save)
         self.savebutton.grid(row=2, padx=10, pady=(5, 0), sticky=(tk.E))
         # status bar
         self.status = tk.StringVar()
         self.statusbar = ttk.Label(self, textvariable=self.status)
-        self.statusbar.grid(row=3, padx=10, sticky=(tk.W + tk.E))
+        self.statusbar.grid(row=3, padx=10, pady=(0, 5), sticky=(tk.W + tk.E))
+        self.records_saved = 0
 
     def on_save(self):
         datestring = datetime.today().strftime('%Y-%m-%d')
@@ -168,6 +169,9 @@ class Application(tk.Tk):
             if newfile:
                 csvwriter.writeheader()
             csvwriter.writerow(data)
+        self.records_saved += 1
+        self.status.set(f'{self.records_saved} record(s) saved this session')
+        self.recordform.reset()
 
 
 if __name__ == '__main__':
