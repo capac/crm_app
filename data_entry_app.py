@@ -3,6 +3,7 @@ from tkinter import ttk
 from datetime import datetime
 import os
 import csv
+from cfi_codes import property_ids
 
 
 class LabelInput(tk.Frame):
@@ -68,24 +69,14 @@ class DataRecordForm(tk.Frame):
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
-        self.property_ids = ['JR '+str(index) for index in range(1, 8)] + \
-                            ['SSC '+str(index) for index in range(1, 17)] + ['SSC A'] + \
-                            ['1LYM  '+str(index) for index in range(1, 18)] + \
-                            ['12LYM '+str(index) for index in range(1, 15)] + \
-                            ['CAV '+str(index) for index in range(1, 10)] + \
-                            ['CAV '+str(index) for index in ['A', 'B', 'C', 'D']] + \
-                            ['STJ '+str(index) for index in range(1, 10)] + ['STJ A'] + \
-                            ['SARRE '+str(index) for index in range(1, 5)] + \
-                            ['RIFF '+str(index) for index in range(1, 8)] + \
-                            ['WOOD '+str(index) for index in range(1, 13)] + \
-                            ['WOOD '+str(index) for index in range(14, 15)]
+        # property id codes for CFI
         officeinfo = tk.LabelFrame(self, text='Office information')
 
         # Office information
         self.inputs['property_id'] = LabelInput(officeinfo, 'Property ID',
                                                 input_class=ttk.Combobox,
                                                 input_var=tk.StringVar(),
-                                                input_args={'values': self.property_ids})
+                                                input_args={'values': property_ids()})
         self.inputs['property_id'].grid(row=0, column=0)
         self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company', input_var=tk.StringVar())
         self.inputs['landlord_company'].grid(row=0, column=1)
