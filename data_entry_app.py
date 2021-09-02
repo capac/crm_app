@@ -78,31 +78,47 @@ class DataRecordForm(tk.Frame):
                                                 input_var=tk.StringVar(),
                                                 input_args={'values': property_ids()})
         self.inputs['property_id'].grid(row=0, column=0)
-        self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company', input_var=tk.StringVar())
+        self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company',
+                                                     input_var=tk.StringVar())
         self.inputs['landlord_company'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
         # Property information
         propertyinfo = tk.LabelFrame(self, text='Property information')
-        self.inputs['flat_num'] = LabelInput(propertyinfo, 'Flat number', input_var=tk.StringVar())
+        self.inputs['flat_num'] = LabelInput(propertyinfo, 'Flat number',
+                                             input_var=tk.StringVar())
         self.inputs['flat_num'].grid(row=0, column=0)
-        self.inputs['address'] = LabelInput(propertyinfo, 'Address', input_var=tk.StringVar())
+        self.inputs['address'] = LabelInput(propertyinfo, 'Address',
+                                            input_var=tk.StringVar())
         self.inputs['address'].grid(row=0, column=1)
-        self.inputs['post_code'] = LabelInput(propertyinfo, 'Post code', input_var=tk.StringVar())
+        self.inputs['post_code'] = LabelInput(propertyinfo, 'Post code',
+                                              input_var=tk.StringVar())
         self.inputs['post_code'].grid(row=0, column=2)
-        self.inputs['city'] = LabelInput(propertyinfo, 'City', input_var=tk.StringVar())
+        self.inputs['city'] = LabelInput(propertyinfo, 'City',
+                                         input_var=tk.StringVar())
         self.inputs['city'].grid(row=0, column=3)
         propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # Tenant information
         tenantinfo = tk.LabelFrame(self, text='Tenant information')
-        self.inputs['first_name'] = LabelInput(tenantinfo, 'First name', input_var=tk.StringVar())
+        self.inputs['first_name'] = LabelInput(tenantinfo, 'First name',
+                                               input_var=tk.StringVar())
         self.inputs['first_name'].grid(row=0, column=0)
-        self.inputs['last_name'] = LabelInput(tenantinfo, 'Last name', input_var=tk.StringVar())
+        self.inputs['last_name'] = LabelInput(tenantinfo, 'Last name',
+                                              input_var=tk.StringVar())
         self.inputs['last_name'].grid(row=0, column=1)
-        self.inputs['email'] = LabelInput(tenantinfo, 'Email', input_var=tk.StringVar())
+        self.inputs['email'] = LabelInput(tenantinfo, 'Email',
+                                          input_var=tk.StringVar())
         self.inputs['email'].grid(row=0, column=2)
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
+
+        # Document information sent by email
+        emaildocumentinfo = tk.LabelFrame(self, text='Document information')
+        self.inputs['email_documents'] = LabelInput(emaildocumentinfo, 'List of documents sent by email',
+                                                    input_class=tk.Text,
+                                                    input_args={'width': 120, 'height': 10})
+        self.inputs['email_documents'].grid(row=0, column=0)
+        emaildocumentinfo.grid(row=3, column=0, sticky=(tk.W + tk.E))
 
         # set default tk entry values to empty strings
         self.reset()
