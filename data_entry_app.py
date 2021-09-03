@@ -65,6 +65,16 @@ class ValidatedMixin:
             return valid
 
 
+class RequiredEntry(ValidatedMixin, ttk.Entry):
+
+    def _focusout_validate(self, event):
+        valid = True
+        if not self.get():
+            valid = False
+            self.error.set('A value is required')
+        return valid
+
+
 class LabelInput(tk.Frame):
     '''A widget containing a label and input together'''
 
@@ -202,7 +212,7 @@ class Application(tk.Tk):
         self.title('Data Entry Form')
         self.resizable(width=False, height=False)
         # application name
-        ttk.Label(self, text='Chalk Farm Investment Data Entry Form', font=('TkDefaultFont', 16)).grid(row=0)
+        ttk.Label(self, text='Chalk Farm Investment Data Query Form', font=('TkDefaultFont', 16)).grid(row=0)
         # data form
         self.recordform = DataRecordForm(self)
         self.recordform.grid(row=1, padx=10)
