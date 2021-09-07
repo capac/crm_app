@@ -21,48 +21,48 @@ class ValidatedMixin:
             invalidcommand=(invcmd, '%P', '%s', '%S', '%V', '%i', '%d')
         )
 
-        def _toggle_error(self, on=False):
-            self.config(foreground=('red' if on else 'black'))
+    def _toggle_error(self, on=False):
+        self.config(foreground=('red' if on else 'black'))
 
-        # valid event
-        def _validate(self, proposed, current, char, event, index, action):
-            self._toggle_error(False)
-            self.error.set('')
-            valid = True
-            if event == 'focusout':
-                valid = self._focusout_validate(event=event)
-            elif event == 'key':
-                valid = self._key_validate(proposed=proposed, current=current,
-                                           char=char, event=event, index=index,
-                                           action=action)
-            return valid
+    # valid event
+    def _validate(self, proposed, current, char, event, index, action):
+        self._toggle_error(False)
+        self.error.set('')
+        valid = True
+        if event == 'focusout':
+            valid = self._focusout_validate(event=event)
+        elif event == 'key':
+            valid = self._key_validate(proposed=proposed, current=current,
+                                       char=char, event=event, index=index,
+                                       action=action)
+        return valid
 
-        def _focusout_validate(self, **kwargs):
-            return True
+    def _focusout_validate(self, **kwargs):
+        return True
 
-        def _key_validate(self, **kwargs):
-            return True
+    def _key_validate(self, **kwargs):
+        return True
 
-        # invalid event
-        def _invalid(self, proposed, current, char, event, index, action):
-            if event == 'focusout':
-                self._focusout_invalid(event=event)
-            elif event == 'key':
-                self._key_invalid(proposed=proposed, current=current,
-                                  char=char, event=event, index=index,
-                                  action=action)
+    # invalid event
+    def _invalid(self, proposed, current, char, event, index, action):
+        if event == 'focusout':
+            self._focusout_invalid(event=event)
+        elif event == 'key':
+            self._key_invalid(proposed=proposed, current=current,
+                              char=char, event=event, index=index,
+                              action=action)
 
-        def _focusout_invalid(self, **kwargs):
-            self._toggle_error(True)
+    def _focusout_invalid(self, **kwargs):
+        self._toggle_error(True)
 
-        def _key_invalid(self, **kwargs):
-            pass
+    def _key_invalid(self, **kwargs):
+        pass
 
-        def trigger_focusout_validation(self):
-            valid = self._validate('', '', '', 'focusout', '', '')
-            if not valid:
-                self._focus_invalid(event='focusout')
-            return valid
+    def trigger_focusout_validation(self):
+        valid = self._validate('', '', '', 'focusout', '', '')
+        if not valid:
+            self._focus_invalid(event='focusout')
+        return valid
 
 
 class RequiredEntry(ValidatedMixin, ttk.Entry):
@@ -179,11 +179,12 @@ class DataRecordForm(tk.Frame):
 
         # Office information
         self.inputs['property_id'] = LabelInput(officeinfo, 'Property ID',
-                                                input_class=ttk.Combobox,
+                                                input_class=ValidatedCombobox,
                                                 input_var=tk.StringVar(),
                                                 input_args={'values': property_ids()})
         self.inputs['property_id'].grid(row=0, column=0)
         self.inputs['landlord_company'] = LabelInput(officeinfo, 'Landlord company',
+                                                     input_class=RequiredEntry,
                                                      input_var=tk.StringVar())
         self.inputs['landlord_company'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
@@ -191,15 +192,19 @@ class DataRecordForm(tk.Frame):
         # Property information
         propertyinfo = tk.LabelFrame(self, text='Property information')
         self.inputs['flat_num'] = LabelInput(propertyinfo, 'Flat number',
+                                             input_class=RequiredEntry,
                                              input_var=tk.StringVar())
         self.inputs['flat_num'].grid(row=0, column=0)
         self.inputs['address'] = LabelInput(propertyinfo, 'Address',
+                                            input_class=RequiredEntry,
                                             input_var=tk.StringVar())
         self.inputs['address'].grid(row=0, column=1)
         self.inputs['post_code'] = LabelInput(propertyinfo, 'Post code',
+                                              input_class=RequiredEntry,
                                               input_var=tk.StringVar())
         self.inputs['post_code'].grid(row=0, column=2)
         self.inputs['city'] = LabelInput(propertyinfo, 'City',
+                                         input_class=RequiredEntry,
                                          input_var=tk.StringVar())
         self.inputs['city'].grid(row=0, column=3)
         propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
@@ -207,12 +212,15 @@ class DataRecordForm(tk.Frame):
         # Tenant information
         tenantinfo = tk.LabelFrame(self, text='Tenant information')
         self.inputs['first_name'] = LabelInput(tenantinfo, 'First name',
+                                               input_class=RequiredEntry,
                                                input_var=tk.StringVar())
         self.inputs['first_name'].grid(row=0, column=0)
         self.inputs['last_name'] = LabelInput(tenantinfo, 'Last name',
+                                              input_class=RequiredEntry,
                                               input_var=tk.StringVar())
         self.inputs['last_name'].grid(row=0, column=1)
         self.inputs['email'] = LabelInput(tenantinfo, 'Email',
+                                          input_class=RequiredEntry,
                                           input_var=tk.StringVar())
         self.inputs['email'].grid(row=0, column=2)
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
