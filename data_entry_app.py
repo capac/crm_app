@@ -61,7 +61,7 @@ class ValidatedMixin:
     def trigger_focusout_validation(self):
         valid = self._validate('', '', '', 'focusout', '', '')
         if not valid:
-            self._focus_invalid(event='focusout')
+            self._focusout_invalid(event='focusout')
         return valid
 
 
@@ -249,6 +249,17 @@ class DataRecordForm(tk.Frame):
         for widget in self.inputs.values():
             widget.set('')
 
+    def get_errors(self):
+        '''Get a list of field errors in the form'''
+
+        errors = {}
+        for key, widget in self.inputs.items():
+            if hasattr(widget.input, 'trigger_focusout_validation'):
+                widget.input.trigger_focusout_validation()
+            if widget.error.get():
+                errors[key] = widget.error.get()
+        return errors
+
 
 class Application(tk.Tk):
     '''Application root window'''
@@ -273,6 +284,16 @@ class Application(tk.Tk):
         self.records_saved = 0
 
     def on_save(self):
+        '''Handles save button clicks'''
+
+        # check for errors first
+        errors = self.recordform.get_errors()
+        if errors:
+            self.status.set(
+                'Cannot save, error in fields: {}'.format(', '.join(errors.keys()))
+            )
+            return False
+
         datestring = datetime.today().strftime('%Y-%m-%d')
         filename = f'data_record_{datestring}.csv'
         # does the file exist?
