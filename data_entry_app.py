@@ -132,6 +132,9 @@ class LabelInput(tk.Frame):
         self.input = input_class(self, **input_args)
         self.input.grid(row=1, column=0, sticky=(tk.E + tk.W))
         self.columnconfigure(0, weight=1)
+        self.error = getattr(self.input, 'error', tk.StringVar())
+        self.error_label = ttk.Label(self, textvariable=self.error)
+        self.error_label.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
     def grid(self, sticky=(tk.E + tk.W), **kwargs):
         super().grid(sticky=sticky, **kwargs)
