@@ -22,17 +22,26 @@ The program must:
 Table entries
 -------------
 
-The main data entry form contains office, property, tenant information and list of documents sent by email. The first pane lists the property ID and landlord company of the flat. The second pane lists information on the flat: number, address, post code and city. The third pane lists tenant information: first name, last name and email. Finally, the fourth pane shows the list of documents sent by email. Visually the data entry form would look something like this.
-
-+--Office information------------------+
-|   Property ID   |  Landlord company  |
-+--Property information----------------+
-|  Flat # | Address | Post code | City |
-+--Tenant information------------------+
-|  First name  |  Last Name  |  Email  |
-+--List of documents sent by email-----+
-|  Email - Document #1                 |
-|  Email - Document #2                 |
-|  Email - Document #3                 |
-|  (...)                               |
-+--------------------------------------+
++-----------------------------------------------------------+
+| Field       | Datatype  | Description                     |
++=============+===========+=================================+
+| Property ID | String    | Property identification         |
++-----------------------------------------------------------+
+| Landlord ID | String    | Landlord Company identification |
++-----------------------------------------------------------+
+| Flat Number | String    | Street number for flat          |
++-----------------------------------------------------------+
+| Address     | String    | Address for flat                |
++-----------------------------------------------------------+
+| Post code   | String    | Post code for flat              |
++-----------------------------------------------------------+
+| City        | String    | City the flat is in             |
++-----------------------------------------------------------+
+| First name  | String    | First name of tenant            |
++-----------------------------------------------------------+
+| Last Name   | String    | Last name of tenant             |
++-----------------------------------------------------------+
+| Email       | String    | Email of tenant                 |
++-----------------------------------------------------------+
+| Documents   | String    | List of documents               |
++-----------------------------------------------------------+
