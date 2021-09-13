@@ -1,14 +1,14 @@
 import csv
 import os
 from .constants import FieldTypes as FT
-from cfi_codes import property_ids, landlord_company_ids
+from cfi_codes import property_ids
 
 
 class CSVModel:
     '''CSV file storage'''
     fields = {
         'Property ID': {'req': True, 'type': FT.string_list, 'values': property_ids},
-        'Landlord ID': {'req': True, 'type': FT.string_list, 'values': landlord_company_ids},
+        'Landlord ID': {'req': True, 'type': FT.string},
         'Flat number': {'req': True, 'type': FT.string},
         'Address': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
