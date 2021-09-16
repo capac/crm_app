@@ -3,6 +3,25 @@ from . import widgets as w
 from cfi_codes import property_ids
 
 
+class MainMenu(tk.Menu):
+    '''The Application's main menu'''
+
+    def __init__(self, parent, settings, callbacks, **kwargs):
+        super().__init__(parent, **kwargs)
+
+        file_menu = tk.Menu(self, tearoff=False)
+        file_menu.add_command(
+            label='Select file...',
+            command=callbacks['file->open']
+            )
+        file_menu.add_separator()
+        file_menu.add_command(
+            label='Quit',
+            command=callbacks['file->quit']
+            )
+        self.add_cascade(label='File', menu=file_menu)
+
+
 class DataRecordForm(tk.Frame):
     '''The input form for our widgets'''
 
