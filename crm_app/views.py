@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from . import widgets as w
 from cfi_codes import property_ids
 
@@ -6,13 +7,26 @@ from cfi_codes import property_ids
 class MainMenu(tk.Menu):
     '''The Application's main menu'''
 
-    def __init__(self, parent, settings, callbacks, **kwargs):
+    def __init__(self, parent, callbacks, **kwargs):
+        '''Constructor for MainMenu
+
+        arguments:
+            parent - the parent widget
+            callbacks - a dict containing Python callbacks
+        '''
         super().__init__(parent, **kwargs)
 
+        # the file menu
         file_menu = tk.Menu(self, tearoff=False)
         file_menu.add_command(
-            label='Select file...',
-            command=callbacks['file->open']
+            # 8230: ASCII value for horizontal ellipsis
+            label='Import file'+chr(8230),
+            command=callbacks['file->import']
+            )
+        file_menu.add_command(
+            # 8230: ASCII value for horizontal ellipsis
+            label='Export file'+chr(8230),
+            command=callbacks['file->export']
             )
         file_menu.add_separator()
         file_menu.add_command(
@@ -20,6 +34,18 @@ class MainMenu(tk.Menu):
             command=callbacks['file->quit']
             )
         self.add_cascade(label='File', menu=file_menu)
+
+        # the help menu
+        help_menu = tk.Menu(self, tearoff=False)
+        help_menu.add_command(label='About'+chr(8230), command=self.show_about)
+        self.add_cascade(label='Help', menu=help_menu)
+
+    def show_about(self):
+        '''Show the about dialog'''
+        about_message = 'Chalk Farm Investments Data Query Application'
+        about_details = ('by Angelo Varlotta\n\n'
+                         'For assistance please contact the author.')
+        messagebox.showinfo(title='About', message=about_message, detail=about_details)
 
 
 class DataRecordForm(tk.Frame):
@@ -34,50 +60,50 @@ class DataRecordForm(tk.Frame):
         officeinfo = tk.LabelFrame(self, text='Office information')
 
         # Office information
-        self.inputs['property_id'] = w.LabelInput(officeinfo, 'Property ID',
+        self.inputs['Property ID'] = w.LabelInput(officeinfo, 'Property ID',
                                                   field_spec=fields['Property ID'],
                                                   input_args={'values': property_ids()})
-        self.inputs['property_id'].grid(row=0, column=0)
-        self.inputs['landlord_company'] = w.LabelInput(officeinfo, 'Landlord company',
-                                                       field_spec=fields['Landlord ID'])
-        self.inputs['landlord_company'].grid(row=0, column=1)
+        self.inputs['Property ID'].grid(row=0, column=0)
+        self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
+                                                  field_spec=fields['Landlord ID'])
+        self.inputs['Landlord ID'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
         # Property information
         propertyinfo = tk.LabelFrame(self, text='Property information')
-        self.inputs['flat_num'] = w.LabelInput(propertyinfo, 'Flat number',
-                                               field_spec=fields['Flat number'])
-        self.inputs['flat_num'].grid(row=0, column=0)
-        self.inputs['address'] = w.LabelInput(propertyinfo, 'Address',
+        self.inputs['Flat number'] = w.LabelInput(propertyinfo, 'Flat number',
+                                                  field_spec=fields['Flat number'])
+        self.inputs['Flat number'].grid(row=0, column=0)
+        self.inputs['Address'] = w.LabelInput(propertyinfo, 'Address',
                                               field_spec=fields['Address'])
-        self.inputs['address'].grid(row=0, column=1)
-        self.inputs['post_code'] = w.LabelInput(propertyinfo, 'Post code',
+        self.inputs['Address'].grid(row=0, column=1)
+        self.inputs['Post code'] = w.LabelInput(propertyinfo, 'Post code',
                                                 field_spec=fields['Post code'])
-        self.inputs['post_code'].grid(row=0, column=2)
-        self.inputs['city'] = w.LabelInput(propertyinfo, 'City',
+        self.inputs['Post code'].grid(row=0, column=2)
+        self.inputs['City'] = w.LabelInput(propertyinfo, 'City',
                                            field_spec=fields['City'])
-        self.inputs['city'].grid(row=0, column=3)
+        self.inputs['City'].grid(row=0, column=3)
         propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # Tenant information
         tenantinfo = tk.LabelFrame(self, text='Tenant information')
-        self.inputs['first_name'] = w.LabelInput(tenantinfo, 'First name',
+        self.inputs['First name'] = w.LabelInput(tenantinfo, 'First name',
                                                  field_spec=fields['First name'])
-        self.inputs['first_name'].grid(row=0, column=0)
-        self.inputs['last_name'] = w.LabelInput(tenantinfo, 'Last name',
+        self.inputs['First name'].grid(row=0, column=0)
+        self.inputs['Last name'] = w.LabelInput(tenantinfo, 'Last name',
                                                 field_spec=fields['Last name'])
-        self.inputs['last_name'].grid(row=0, column=1)
-        self.inputs['email'] = w.LabelInput(tenantinfo, 'Email',
+        self.inputs['Last name'].grid(row=0, column=1)
+        self.inputs['Email'] = w.LabelInput(tenantinfo, 'Email',
                                             field_spec=fields['Email'])
-        self.inputs['email'].grid(row=0, column=2)
+        self.inputs['Email'].grid(row=0, column=2)
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
         # Document information sent by email
         emaildocumentinfo = tk.LabelFrame(self, text='Document information')
-        self.inputs['email_documents'] = w.LabelInput(emaildocumentinfo, 'List of documents sent by email',
-                                                      input_class=tk.Text,
-                                                      input_args={'width': 110, 'height': 10})
-        self.inputs['email_documents'].grid(row=0, column=0)
+        self.inputs['Documents'] = w.LabelInput(emaildocumentinfo, 'List of documents sent by email',
+                                                input_class=tk.Text,
+                                                input_args={'width': 110, 'height': 10})
+        self.inputs['Documents'].grid(row=0, column=0)
         emaildocumentinfo.grid(row=3, column=0, sticky=(tk.W + tk.E))
 
         # set default tk entry values to empty strings
