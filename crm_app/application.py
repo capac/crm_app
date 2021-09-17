@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
 from . import views as v
 from . import models as m
@@ -15,6 +15,18 @@ class Application(tk.Tk):
         self.resizable(width=False, height=False)
         # application name
         ttk.Label(self, text='Chalk Farm Investment Data Query Form', font=('TkDefaultFont', 16)).grid(row=0)
+        # filename variable
+        datestring = datetime.today().strftime('%Y-%m-%d')
+        default_filename = f'data_record_{datestring}.csv'
+        self.filename = tk.StringVar(value=default_filename)
+        # settings
+        self.callbacks = {
+            'file->import': self.on_file_import,
+            'file->export': self.on_file_export,
+            'file->quit': self.quit
+        }
+        menu = v.MainMenu(self, self.callbacks)
+        self.config(menu=menu)
         # data form
         self.recordform = v.DataRecordForm(self, m.CSVModel.fields)
         self.recordform.grid(row=1, padx=10)
@@ -41,8 +53,7 @@ class Application(tk.Tk):
             messagebox.showerror(title='Error', message=message, detail=detail)
             return False
 
-        datestring = datetime.today().strftime('%Y-%m-%d')
-        filename = f'data_record_{datestring}.csv'
+        filename = self.filename.get()
         model = m.CSVModel(filename)
         # get data
         data = self.recordform.get()
@@ -50,3 +61,25 @@ class Application(tk.Tk):
         self.records_saved += 1
         self.status.set(f'{self.records_saved} record(s) saved this session')
         self.recordform.reset()
+
+    # import records from CSV file to database
+    def on_file_import(self):
+        '''Handles the file->import action from the menu'''
+        filename = filedialog.askopenfile(
+            title='Select the file to import into the database',
+            defaultextension='.csv',
+            filetypes=[('Comma-Separated Values', '*.csv *.CSV')]
+        )
+        if filename:
+            self.filename.set(filename)
+
+    # save records to CSV file
+    def on_file_export(self):
+        '''Handles the file->export action from the menu'''
+        filename = filedialog.asksaveasfile(
+            title='Create the target file for saving records',
+            defaultextension='.csv',
+            filetypes=[('Comma-Separated Values', '*.csv *.CSV')]
+        )
+        if filename:
+            self.filename.set(filename)
