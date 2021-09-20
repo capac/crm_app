@@ -42,9 +42,10 @@ class MainMenu(tk.Menu):
 
     def show_about(self):
         '''Show the about dialog'''
-        about_message = 'Chalk Farm Investments Data Query Application'
-        about_details = ('by Angelo Varlotta\n\n'
-                         'For assistance please contact the author.')
+        about_message = 'CFI Data Query Application'
+        about_details = ('by Giulia Bryson\n'
+                         'and Angelo Varlotta\n\n'
+                         'For assistance please contact the authors.')
         messagebox.showinfo(title='About', message=about_message, detail=about_details)
 
 
