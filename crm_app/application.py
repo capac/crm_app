@@ -14,7 +14,7 @@ class Application(tk.Tk):
         self.title('Data Entry Form')
         self.resizable(width=False, height=False)
         # application name
-        ttk.Label(self, text='CFI Data Query Form', font=('TkDefaultFont', 16)).grid(row=0)
+        ttk.Label(self, text='Data Query Form', font=('TkDefaultFont', 16)).grid(row=0)
         # filename variable
         datestring = datetime.today().strftime('%Y-%m-%d')
         default_filename = f'data_record_{datestring}.csv'
