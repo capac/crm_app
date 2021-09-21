@@ -3,3 +3,4 @@ __pycache__/
 *.py[cod]
 *$py.class
 cfi_codes.py
+*.sql
