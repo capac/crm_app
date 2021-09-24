@@ -43,10 +43,10 @@ class MainMenu(tk.Menu):
     def show_about(self):
         '''Show the about dialog'''
         about_message = 'Data Query Application'
-        about_details = ('Customer relationship management application\n'
-                         'for the query of tenant information\n'
-                         'by property identification.\n'
-                         'For assistance please contact the author.')
+        about_details = ('Customer relationship management \
+                         application for the query of tenant \
+                         information by property identification.\n\n\
+                         For assistance please contact the author.')
         messagebox.showinfo(title='About', message=about_message, detail=about_details)
 
 
