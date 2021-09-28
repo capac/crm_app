@@ -7,14 +7,16 @@ from cfi_codes import property_ids
 class MainMenu(tk.Menu):
     '''The Application's main menu'''
 
-    def __init__(self, parent, callbacks, **kwargs):
+    def __init__(self, parent, settings, callbacks, *args, **kwargs):
         '''Constructor for MainMenu
 
         arguments:
             parent - the parent widget
             callbacks - a dict containing Python callbacks
+            settings - dict to save user settings
         '''
-        super().__init__(parent, **kwargs)
+        super().__init__(parent, *args, **kwargs)
+        self.settings = settings
 
         # the file menu
         file_menu = tk.Menu(self, tearoff=False)
