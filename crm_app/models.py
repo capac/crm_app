@@ -108,9 +108,12 @@ class SQLModel:
         email = record['Email']
         prop_id = record['Property ID']
 
+        # if the property exists, update the tenant information
         if self.get_record(prop_id, first_name, last_name, email):
             tenant_query = self.tenants_update_query
             self.last_write = 'update'
+        # if the property exists but doesn't have tenant
+        # information, associate it to the property data
         else:
             tenant_query = self.tenants_insert_query
             self.last_write = 'insert'
