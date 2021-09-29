@@ -1,3 +1,4 @@
+import platform
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
@@ -7,32 +8,49 @@ from . import models as m
 
 class Application(tk.Tk):
     '''Application root window'''
+    # supported platforms: macOS and Windows
+    config_dirs = {
+        'Darwin': '~/Library/Application Support',
+        'Windows': '~/AppData/Local',
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # application title
         self.title('Data Entry Form')
         self.resizable(width=False, height=False)
+
         # application name
         ttk.Label(self, text='Data Query Form', font=('TkDefaultFont', 16)).grid(row=0)
+
         # filename variable
         datestring = datetime.today().strftime('%Y-%m-%d')
         default_filename = f'data_record_{datestring}.csv'
         self.filename = tk.StringVar(value=default_filename)
-        # settings
+
+        # settings model and settings
+        config_dir = self.config_dirs.get(platform.system(), '~')
+        self.settings_model = m.SettingsModel(path=config_dir)
+        self.load_settings()
+
+        # create data model
         self.callbacks = {
             'file->import': self.on_file_import,
             'file->export': self.on_file_export,
             'file->quit': self.quit
         }
-        menu = v.MainMenu(self, self.callbacks)
+        menu = v.MainMenu(self, self.settings, self.callbacks)
         self.config(menu=menu)
+
         # data form
         self.recordform = v.DataRecordForm(self, m.CSVModel.fields)
         self.recordform.grid(row=1, padx=10)
+
         # save button
         self.savebutton = ttk.Button(self, text='Save to CSV', command=self.on_save)
         self.savebutton.grid(row=2, padx=10, pady=(10, 0), sticky=(tk.E))
+
         # status bar
         self.status = tk.StringVar()
         self.statusbar = ttk.Label(self, textvariable=self.status)
@@ -55,6 +73,7 @@ class Application(tk.Tk):
 
         filename = self.filename.get()
         model = m.CSVModel(filename)
+
         # get data
         data = self.recordform.get()
         model.save_record(data)
@@ -83,3 +102,28 @@ class Application(tk.Tk):
         )
         if filename:
             self.filename.set(filename)
+
+    def load_settings(self):
+        '''Load settings into our self.settings dict'''
+        vartypes = {
+            'bool': tk.BooleanVar,
+            'str': tk.StringVar,
+            'int': tk.IntVar,
+            'float': tk.DoubleVar
+        }
+
+        # create our dict of settings variables from the model's settings
+        self.settings = {}
+        for key, data in self.settings_model.variables.items():
+            vartype = vartypes.get(data['type'], tk.StringVar)
+            self.settings[key] = vartype(value=data['value'])
+
+        # put a trace on the variables so they get stored when changed
+        for var in self.settings.values():
+            var.trace('w', self.save_settings)
+
+    def save_settings(self, *args):
+        '''Save the current settings to a preferences file'''
+        for key, variable in self.settings.items():
+            self.settings_model.set(key, variable.get())
+        self.settings_model.save()
