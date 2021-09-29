@@ -1,5 +1,6 @@
 import csv
 import os
+import json
 from .constants import FieldTypes as FT
 import psycopg2 as pg
 from psycopg2.extras import DictCursor
@@ -136,3 +137,46 @@ class SQLModel:
             property_query = self.propriety_delete_query
 
         self.query(property_query, record)
+
+
+class SettingsModel:
+    '''A model for saving settings'''
+
+    variables = {
+        'db_host': {'type': 'str', 'value': 'localhost'},
+        'db_name': {'type': 'str', 'value': 'dbase'},
+    }
+
+    def __init__(self, filename='settings.json', path='~'):
+        # determine the file path
+        self.filepath = os.path.join(os.path.expanduser(path), filename)
+        # load in saved values
+        self.load()
+
+    def load(self):
+        '''Load the settings from the file'''
+        # if the file doesn't exist, return
+        if not os.exists(self.filepath):
+            return
+        # open the file and read the raw values
+        with open(self.filepath, 'r') as fh:
+            raw_values = json.loads(fh.read())
+        # don't implicitly trust the raw values,
+        # but only get known keys
+        for key in self.variables:
+            if key in raw_values and 'value' in raw_values[key]:
+                raw_value = raw_values[key]['value']
+                self.variables[key]['value'] = raw_value
+
+    def save(self, settings=None):
+        json_string = json.dumps(self.variables)
+        with open(self.filepath, 'w') as fh:
+            fh.write(json_string)
+
+    def set(self, key, value):
+        if (
+            key in self.variables and type(value).__name__ == self.variables[key]['type']
+        ):
+            self.variables[key]['value'] = value
+        else:
+            raise ValueError('Bad key or wrong variable type')
