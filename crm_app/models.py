@@ -156,7 +156,7 @@ class SettingsModel:
     def load(self):
         '''Load the settings from the file'''
         # if the file doesn't exist, return
-        if not os.exists(self.filepath):
+        if not os.path.exists(self.filepath):
             return
         # open the file and read the raw values
         with open(self.filepath, 'r') as fh:
