@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
+from tkinter.simpledialog import Dialog
 from . import widgets as w
 from cfi_codes import property_ids
 
@@ -55,8 +57,9 @@ class MainMenu(tk.Menu):
 class DataRecordForm(tk.Frame):
     '''The input form for our widgets'''
 
-    def __init__(self, parent, fields, *args, **kwargs):
+    def __init__(self, parent, fields, settings, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.settings = settings
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
@@ -133,3 +136,28 @@ class DataRecordForm(tk.Frame):
             if widget.error.get():
                 errors[key] = widget.error.get()
         return errors
+
+
+class LoginDialog(Dialog):
+    def __init__(self, parent, title, error=''):
+        self.pw = tk.StringVar()
+        self.user = tk.StringVar()
+        self.error = tk.StringVar(value=error)
+        super().__init__(parent, title=title)
+
+    def body(self, parent):
+        lf = tk.Frame(self)
+        ttk.Label(lf, text='Login to database', font='Sans 20').grid()
+        if self.error.get():
+            tk.Label(lf, textvariable=self.error, bg='darkred', fg='white').grid()
+        ttk.Label(lf, text='User name:').grid()
+        self.username_inp = ttk.Entry(lf, textvariable=self.user)
+        self.username_inp.grid()
+        ttk.Label(lf, text='Password:').grid()
+        self.password_inp = ttk.Entry(lf, show='*', textvariable=self.pw)
+        self.password_inp.grid()
+        lf.pack()
+        return self.username_inp
+
+    def apply(self):
+        self.result = (self.user.get(), self.pw.get())
