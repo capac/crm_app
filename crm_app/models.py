@@ -9,6 +9,7 @@ from cfi_codes import property_ids
 
 class CSVModel:
     '''CSV file storage'''
+
     fields = {
         'Property ID': {'req': True, 'type': FT.string_list, 'values': property_ids},
         'Landlord ID': {'req': True, 'type': FT.string},
@@ -41,6 +42,7 @@ class CSVModel:
 
 class SQLModel:
     '''SQL database values'''
+
     fields = {
         # these values are populated by the lookup tables:
         # landlords, properties and tenants
@@ -155,6 +157,7 @@ class SettingsModel:
 
     def load(self):
         '''Load the settings from the file'''
+
         # if the file doesn't exist, return
         if not os.path.exists(self.filepath):
             return
