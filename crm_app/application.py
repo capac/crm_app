@@ -8,6 +8,7 @@ from . import models as m
 
 class Application(tk.Tk):
     '''Application root window'''
+
     # supported platforms: macOS and Windows
     config_dirs = {
         'Darwin': '~/Library/Application Support',
@@ -34,6 +35,15 @@ class Application(tk.Tk):
         self.settings_model = m.SettingsModel(path=config_dir)
         self.load_settings()
 
+        # database login
+        self.database_login()
+        if not hasattr(self, 'data_model'):
+            self.destroy()
+            return
+
+        # settings
+        self.settings = {}
+
         # create data model
         self.callbacks = {
             'file->import': self.on_file_import,
@@ -44,7 +54,7 @@ class Application(tk.Tk):
         self.config(menu=menu)
 
         # data form
-        self.recordform = v.DataRecordForm(self, m.CSVModel.fields)
+        self.recordform = v.DataRecordForm(self, m.CSVModel.fields, self.settings)
         self.recordform.grid(row=1, padx=10)
 
         # save button
@@ -84,6 +94,7 @@ class Application(tk.Tk):
     # import records from CSV file to database
     def on_file_import(self):
         '''Handles the file->import action from the menu'''
+
         filename = filedialog.askopenfile(
             title='Select the file to import into the database',
             defaultextension='.csv',
@@ -95,6 +106,7 @@ class Application(tk.Tk):
     # save records to CSV file
     def on_file_export(self):
         '''Handles the file->export action from the menu'''
+
         filename = filedialog.asksaveasfile(
             title='Create the target file for saving records',
             defaultextension='.csv',
@@ -105,6 +117,7 @@ class Application(tk.Tk):
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
+
         vartypes = {
             'bool': tk.BooleanVar,
             'str': tk.StringVar,
@@ -124,6 +137,27 @@ class Application(tk.Tk):
 
     def save_settings(self, *args):
         '''Save the current settings to a preferences file'''
+
         for key, variable in self.settings.items():
             self.settings_model.set(key, variable.get())
         self.settings_model.save()
+
+    def database_login(self):
+        '''Try to login to the database and create self.data_model'''
+
+        error = ''
+        db_host = self.settings['db_host'].get()
+        db_name = self.settings['db_name'].get()
+        title = f'Login to {db_name} at {db_host}'
+        while True:
+            login = v.LoginDialog(self, title, error)
+            if not login.result:
+                break
+            else:
+                username, password = login.result
+                try:
+                    self.data_model = m.SQLModel(db_host, db_name, username, password)
+                except m.pg.OperationalError:
+                    error = 'Login failed'
+                else:
+                    break
