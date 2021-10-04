@@ -57,9 +57,10 @@ class MainMenu(tk.Menu):
 class DataRecordForm(tk.Frame):
     '''The input form for our widgets'''
 
-    def __init__(self, parent, fields, settings, *args, **kwargs):
+    def __init__(self, parent, fields, settings, callbacks, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.settings = settings
+        self.callbacks = callbacks
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
