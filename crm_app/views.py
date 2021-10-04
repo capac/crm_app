@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter.simpledialog import Dialog
 from . import widgets as w
-from cfi_codes import property_ids
+from cfi_codes import property_ids, landlord_company_ids
 
 
 class MainMenu(tk.Menu):
@@ -73,7 +73,8 @@ class DataRecordForm(tk.Frame):
                                                   input_args={'values': property_ids()})
         self.inputs['Property ID'].grid(row=0, column=0)
         self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
-                                                  field_spec=fields['Landlord ID'])
+                                                  field_spec=fields['Landlord ID'],
+                                                  input_args={'values': landlord_company_ids()})
         self.inputs['Landlord ID'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
