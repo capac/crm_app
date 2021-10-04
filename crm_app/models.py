@@ -4,7 +4,7 @@ import json
 from .constants import FieldTypes as FT
 import psycopg2 as pg
 from psycopg2.extras import DictCursor
-from cfi_codes import property_ids
+from cfi_codes import property_ids, landlord_company_ids
 
 
 class CSVModel:
@@ -12,7 +12,7 @@ class CSVModel:
 
     fields = {
         'Property ID': {'req': True, 'type': FT.string_list, 'values': property_ids},
-        'Landlord ID': {'req': True, 'type': FT.string},
+        'Landlord ID': {'req': True, 'type': FT.string_list, 'values': landlord_company_ids},
         'Flat number': {'req': True, 'type': FT.string},
         'Address': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
@@ -106,8 +106,8 @@ class SQLModel:
 
     def save_record(self, record):
         # add or update tenant information
-        first_name = record['First Name']
-        last_name = record['Last Name']
+        first_name = record['First name']
+        last_name = record['Last name']
         email = record['Email']
         prop_id = record['Property ID']
 
@@ -146,7 +146,7 @@ class SettingsModel:
 
     variables = {
         'db_host': {'type': 'str', 'value': 'localhost'},
-        'db_name': {'type': 'str', 'value': 'dbase'},
+        'db_name': {'type': 'str', 'value': 'housing_management'},
     }
 
     def __init__(self, filename='settings.json', path='~'):
