@@ -9,7 +9,7 @@ from cfi_codes import property_ids, landlord_company_ids
 class MainMenu(tk.Menu):
     '''The Application's main menu'''
 
-    def __init__(self, parent, settings, callbacks, *args, **kwargs):
+    def __init__(self, parent, callbacks, *args, **kwargs):
         '''Constructor for MainMenu
 
         arguments:
@@ -18,7 +18,6 @@ class MainMenu(tk.Menu):
             settings - dict to save user settings
         '''
         super().__init__(parent, *args, **kwargs)
-        self.settings = settings
 
         # the file menu
         file_menu = tk.Menu(self, tearoff=False)
