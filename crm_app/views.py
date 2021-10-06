@@ -83,9 +83,9 @@ class DataRecordForm(tk.Frame):
         self.inputs['Flat number'] = w.LabelInput(propertyinfo, 'Flat number',
                                                   field_spec=fields['Flat number'])
         self.inputs['Flat number'].grid(row=0, column=0)
-        self.inputs['Address'] = w.LabelInput(propertyinfo, 'Address',
-                                              field_spec=fields['Address'])
-        self.inputs['Address'].grid(row=0, column=1)
+        self.inputs['Street'] = w.LabelInput(propertyinfo, 'Street',
+                                             field_spec=fields['Street'])
+        self.inputs['Street'].grid(row=0, column=1)
         self.inputs['Post code'] = w.LabelInput(propertyinfo, 'Post code',
                                                 field_spec=fields['Post code'])
         self.inputs['Post code'].grid(row=0, column=2)
