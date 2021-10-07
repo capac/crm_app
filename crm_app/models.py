@@ -22,7 +22,7 @@ class CSVModel:
         'Email': {'req': True, 'type': FT.string},
         # this variable will need to be changed when the
         # list of documents sent by email is implemented
-        'Document': {'req': True, 'type': FT.long_string},
+        # 'Document': {'req': True, 'type': FT.long_string},
     }
 
     def __init__(self, filename):
@@ -49,7 +49,7 @@ class SQLModel:
         'Landlord ID': {'req': True, 'type': FT.string_list, 'values': []},
         'Property ID': {'req': True, 'type': FT.string_list, 'values': []},
         'Flat number': {'req': True, 'type': FT.string},
-        'Address': {'req': True, 'type': FT.string},
+        'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
         'City': {'req': True, 'type': FT.string},
         'First name': {'req': True, 'type': FT.string},
@@ -57,20 +57,20 @@ class SQLModel:
         'Email': {'req': True, 'type': FT.string},
         # this value is populated from the documents in the
         #  email attachments using the Microsoft Graph API
-        'Document': {'req': True, 'type': FT.long_string},
+        # 'Document': {'req': True, 'type': FT.long_string},
     }
 
-    # insert tenant in property
+    # insert tenant in existing property
     tenants_insert_query = ('INSERT INTO tenants VALUES (%(Property ID)s, %(First name)s, '
                             '%(Last name)s, %(Email)s)')
-    # update tenant in property
+    # update tenant in existing property
     tenants_update_query = ('UPDATE tenants SET first_name=%(First name)s, last_name=%(Last name)s, '
                             'email=%(Email)s WHERE prop_id = %(Property ID)s')
 
-    # insert new property
+    # insert new property, used rarely
     propriety_insert_query = ('INSERT INTO properties VALUES (%(Property ID)s, %(Landlord ID)s, '
                               '%(Flat number)s, %(Street)s, %(Post code)s, %(City)s)')
-    # delete old property
+    # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
 
     def __init__(self, host, database, user, password):
@@ -93,46 +93,41 @@ class SQLModel:
             if cursor.description is not None:
                 return cursor.fetchall()
 
-    def get_all_records(self):
+    def get_all_properties(self):
         query = ('SELECT * FROM data_record_view '
                  'ORDER BY "Property ID"')
         return self.query(query)
 
-    def get_record(self, prop_id):
+    def get_property(self, prop_id):
         query = ('SELECT * FROM data_record_view '
                  'WHERE "Property ID" = %(prop_id)s')
-        result = self.query(query, {"Property ID": prop_id})
+        result = self.query(query, {"prop_id": prop_id})
         return result[0] if result else {}
 
-    def save_record(self, record):
+    def update_tenant(self, record):
         # add or update tenant information
-        first_name = record['First name']
-        last_name = record['Last name']
-        email = record['Email']
         prop_id = record['Property ID']
 
-        # if the property exists, update the tenant information
-        if self.get_record(prop_id, first_name, last_name, email):
+        # if the property already contains a tenant, update
+        # the property with the new tenant information
+        if self.get_property(prop_id):
             tenant_query = self.tenants_update_query
             self.last_write = 'update'
-        # if the property exists but doesn't have tenant
-        # information, associate it to the property data
+        # if the property exists but doesn't have any tenant
+        # information, associate the tenant data to the property
         else:
             tenant_query = self.tenants_insert_query
             self.last_write = 'insert'
 
         self.query(tenant_query, record)
 
-    def change_property_record(self, record):
+    def update_property(self, record):
         # add or update property information
         prop_id = record['Property ID']
-        flat_number = record['Flat number']
-        street = record['Street']
-        city = record['City']
-        post_code = record['Post code']
-
-        # if record doesn't exists, add new property record
-        if not self.get_record(prop_id, flat_number, street, city, post_code):
+        print(f'prop_id: {prop_id}')
+        print(f'self.get_property(prop_id): {self.get_property(prop_id)}')
+        # if property doesn't exists, add new property record
+        if not self.get_property(prop_id):
             property_query = self.propriety_insert_query
         # if record exists, remove old property record
         else:
