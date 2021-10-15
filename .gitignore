@@ -4,3 +4,4 @@ __pycache__/
 *$py.class
 cfi_codes.py
 *.code-workspace
+update_db.sql
