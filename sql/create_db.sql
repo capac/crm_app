@@ -2,11 +2,12 @@
 --   landlords
 --   properties
 
-CREATE TABLE landlords (
+CREATE TABLE IF NOT EXISTS landlords (
     id VARCHAR(6) UNIQUE NOT NULL,
     PRIMARY KEY(id)
     );
-CREATE TABLE properties (
+
+CREATE TABLE IF NOT EXISTS properties (
     id VARCHAR(7) UNIQUE NOT NULL,
     landlord_id VARCHAR(6) NOT NULL REFERENCES landlords(id),
     flat_num VARCHAR(2) NOT NULL,
@@ -15,7 +16,8 @@ CREATE TABLE properties (
     city VARCHAR(20) NOT NULL,
     PRIMARY KEY(id)
     );
-CREATE TABLE tenants (
+
+CREATE TABLE IF NOT EXISTS tenants (
     id SERIAL UNIQUE NOT NULL,
     prop_id VARCHAR(7) NOT NULL REFERENCES properties(id),
     first_name VARCHAR(20),
@@ -23,7 +25,8 @@ CREATE TABLE tenants (
     email VARCHAR(60),
     PRIMARY KEY(id)
     );
-CREATE TABLE documents (
+
+CREATE TABLE IF NOT EXISTS documents (
     id SERIAL UNIQUE NOT NULL,
     prop_id VARCHAR(10) NOT NULL REFERENCES properties(id),
     tenant_id SERIAL NOT NULL REFERENCES tenants(id),
