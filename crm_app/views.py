@@ -56,10 +56,8 @@ class MainMenu(tk.Menu):
 class DataRecordForm(tk.Frame):
     '''The input form for our widgets'''
 
-    def __init__(self, parent, fields, settings, callbacks, *args, **kwargs):
+    def __init__(self, parent, fields, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.settings = settings
-        self.callbacks = callbacks
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
@@ -137,6 +135,106 @@ class DataRecordForm(tk.Frame):
             if widget.error.get():
                 errors[key] = widget.error.get()
         return errors
+
+
+class RecordList(tk.Frame):
+    '''Display records in the database'''
+
+    column_defs = {
+        '#0': {'label': 'Row', 'anchor': tk.W},
+        'Landlord ID': {'label': 'Landlord ID', 'anchor': tk.CENTER, 'width': 40},
+        'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 40},
+        'Flat number': {'label': 'Flat number', 'width': 10},
+        'Street': {'label': 'Street'},
+        'Post code': {'label': 'Post code', 'width': 40},
+        'City': {'label': 'City'},
+        'First name': {'label': 'First name'},
+        'Last name': {'label': 'Last name'},
+        'Email': {'label': 'Email', 'width': 200},
+    }
+    default_width = 80
+    default_minwidth = 10
+    default_anchor = tk.W
+
+    def __init__(self, parent, callbacks,
+                 inserted, updated,
+                 *args, **kwargs):
+        super.__init__(parent, *args, **kwargs)
+        self.callbacks = callbacks
+        self.inserted = inserted
+        self.updated = updated
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        # create treeview
+        self.treeview = ttk.Treeview(self, columns=list(self.column_defs.keys())[1:],
+                                     selectmode='browse')
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.treeview.grid(row=0, column=0, sticky=tk.N + tk.S + tk.E + tk.W)
+
+        # hide first column
+        self.treeview.config(show='headings')
+
+        # configure scrollbar for the treeview
+        self.scrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL,
+                                       command=self.treeview.yview)
+        self.treeview.configure(yscrollcommand=self.scrollbar.set)
+        self.treeview.grid(row=0, column=0, sticky='NSEW')
+        self.scrollbar.grid(row=0, column=1, sticky='NSEW')
+
+        # configure treeview columns
+        for name, definition in self.column_defs.items():
+            label = definition.get('label', '')
+            anchor = definition.get('anchor', self.default_anchor)
+            minwidth = definition.get('minwidth', self.default_minwidth)
+            width = definition.get('width', self.default_width)
+            stretch = definition.get('stretch', False)
+            self.treeview.heading(name, text=label, anchor=anchor)
+            self.treeview.column(name, anchor=anchor, minwidth=minwidth,
+                                 width=width, stretch=stretch)
+
+        # configure row tags
+        self.treeview.tag_configure('inserted', background='lightgreen')
+        self.treeview.tag_configure('updated', background='lightblue')
+
+        # bind double-clicks
+        self.treeview.bind('<<TreeviewOpen>>', self.on_open_record)
+
+    def populate(self, rows):
+        '''Clear the treeview and write the supplied data rows to it'''
+
+        for row in self.treeview.get_children():
+            self.treeview.delete(row)
+
+        valuekeys = list(self.column_defs.keys())[1:]
+        for rowdata in rows:
+            rowkey = (str(rowdata['Landlord ID']), str(rowdata['Property ID']),
+                      str(rowdata['Flat number']), str(rowdata['Street']),
+                      str(rowdata['Post code']), str(rowdata['City']),
+                      str(rowdata['First name']), str(rowdata['Last name']),
+                      str(rowdata['Email']))
+            values = [rowdata[key] for key in valuekeys]
+            if self.inserted and rowkey in self.inserted:
+                tag = 'inserted'
+            elif self.updated and rowkey in self.updated:
+                tag = 'updated'
+            else:
+                tag = ''
+            stringkey = '{}|{}|{}|{}|{}|{}|{}|{}|{}'.format(*rowkey)
+            self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
+                                 values=values, tag=tag)
+
+            if len(rows) > 0:
+                firstrow = self.treeview.identify_row(0)
+                self.treeview.focus_set()
+                self.treeview.selection_set(firstrow)
+                self.treeview.focus(firstrow)
+
+    def on_open_record(self, *args):
+
+        selected_id = self.treeview.selection()[0]
+        self.callbacks['on_open_record'](selected_id.split('|'))
 
 
 class LoginDialog(Dialog):
