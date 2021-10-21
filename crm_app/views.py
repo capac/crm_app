@@ -56,8 +56,9 @@ class MainMenu(tk.Menu):
 class DataRecordForm(tk.Frame):
     '''The input form for our widgets'''
 
-    def __init__(self, parent, fields, *args, **kwargs):
+    def __init__(self, parent, fields, callbacks, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.callbacks = callbacks
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
@@ -103,6 +104,12 @@ class DataRecordForm(tk.Frame):
                                             field_spec=fields['Email'])
         self.inputs['Email'].grid(row=0, column=2)
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
+
+        # operations section
+        operations = tk.LabelFrame(self, text='Commands')
+        self.savebutton = ttk.Button(operations, text='Save',
+                                     command=self.callbacks['on_save'])
+        self.savebutton.grid(row=3, column=0, padx=10, pady=(10, 0), sticky=(tk.E))
 
         # # Document information sent by email
         # emaildocumentinfo = tk.LabelFrame(self, text='Document information')
