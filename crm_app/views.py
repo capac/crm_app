@@ -166,7 +166,7 @@ class RecordList(tk.Frame):
     def __init__(self, parent, callbacks,
                  inserted, updated,
                  *args, **kwargs):
-        super.__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.callbacks = callbacks
         self.inserted = inserted
         self.updated = updated
