@@ -149,7 +149,6 @@ class RecordList(tk.Frame):
 
     column_defs = {
         '#0': {'label': 'Row', 'anchor': tk.W},
-        'Landlord ID': {'label': 'Landlord ID', 'anchor': tk.CENTER, 'width': 40},
         'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 40},
         'Flat number': {'label': 'Flat number', 'width': 10},
         'Street': {'label': 'Street'},
@@ -178,7 +177,7 @@ class RecordList(tk.Frame):
                                      selectmode='browse')
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
-        self.treeview.grid(row=0, column=0, sticky=tk.N + tk.S + tk.E + tk.W)
+        self.treeview.grid(row=0, column=0, sticky='NSEW')
 
         # hide first column
         self.treeview.config(show='headings')
@@ -216,11 +215,10 @@ class RecordList(tk.Frame):
 
         valuekeys = list(self.column_defs.keys())[1:]
         for rowdata in rows:
-            rowkey = (str(rowdata['Landlord ID']), str(rowdata['Property ID']),
-                      str(rowdata['Flat number']), str(rowdata['Street']),
-                      str(rowdata['Post code']), str(rowdata['City']),
-                      str(rowdata['First name']), str(rowdata['Last name']),
-                      str(rowdata['Email']))
+            rowkey = (str(rowdata['Property ID']), str(rowdata['Flat number']),
+                      str(rowdata['Street']), str(rowdata['Post code']),
+                      str(rowdata['City']), str(rowdata['First name']),
+                      str(rowdata['Last name']), str(rowdata['Email']))
             values = [rowdata[key] for key in valuekeys]
             if self.inserted and rowkey in self.inserted:
                 tag = 'inserted'
@@ -228,7 +226,7 @@ class RecordList(tk.Frame):
                 tag = 'updated'
             else:
                 tag = ''
-            stringkey = '{}|{}|{}|{}|{}|{}|{}|{}|{}'.format(*rowkey)
+            stringkey = '{}|{}|{}|{}|{}|{}|{}|{}'.format(*rowkey)
             self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
                                  values=values, tag=tag)
 
