@@ -149,17 +149,17 @@ class RecordList(tk.Frame):
 
     column_defs = {
         '#0': {'label': 'Row', 'anchor': tk.W},
-        'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 40},
-        'Flat number': {'label': 'Flat number', 'width': 10},
-        'Street': {'label': 'Street'},
-        'Post code': {'label': 'Post code', 'width': 40},
-        'City': {'label': 'City'},
-        'First name': {'label': 'First name'},
-        'Last name': {'label': 'Last name'},
-        'Email': {'label': 'Email', 'width': 200},
+        'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 80},
+        'Flat number': {'label': 'Flat number', 'width': 80},
+        'Street': {'label': 'Street', 'width': 180},
+        'Post code': {'label': 'Post code', 'anchor': tk.CENTER, 'width': 80},
+        'City': {'label': 'City', 'width': 80},
+        'First name': {'label': 'First name', 'width': 80},
+        'Last name': {'label': 'Last name', 'width': 100},
+        'Email': {'label': 'Email', 'width': 220},
     }
-    default_width = 80
-    default_minwidth = 10
+    default_width = 100
+    default_minwidth = 20
     default_anchor = tk.W
 
     def __init__(self, parent, callbacks,
