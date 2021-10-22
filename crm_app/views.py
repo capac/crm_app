@@ -106,18 +106,9 @@ class DataRecordForm(tk.Frame):
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
         # operations section
-        operations = tk.LabelFrame(self, text='Commands')
-        self.savebutton = ttk.Button(operations, text='Save',
+        self.savebutton = ttk.Button(self, text='Save',
                                      command=self.callbacks['on_save'])
-        self.savebutton.grid(row=3, column=0, padx=10, pady=(10, 0), sticky=(tk.E))
-
-        # # Document information sent by email
-        # emaildocumentinfo = tk.LabelFrame(self, text='Document information')
-        # self.inputs['Documents'] = w.LabelInput(emaildocumentinfo, 'List of documents sent by email',
-        #                                         input_class=tk.Text,
-        #                                         input_args={'width': 110, 'height': 10})
-        # self.inputs['Documents'].grid(row=0, column=0)
-        # emaildocumentinfo.grid(row=3, column=0, sticky=(tk.W + tk.E))
+        self.savebutton.grid(row=3, column=0, padx=10, pady=(10, 0), sticky=(tk.W))
 
         # set default tk entry values to empty strings
         self.reset()
