@@ -242,6 +242,7 @@ class LoginDialog(Dialog):
 
     def body(self, parent):
         lf = tk.Frame(self)
+        self.geometry('280x180')
         ttk.Label(lf, text='Login to database', font='Sans 20').grid()
         if self.error.get():
             tk.Label(lf, textvariable=self.error, bg='darkred', fg='white').grid()
