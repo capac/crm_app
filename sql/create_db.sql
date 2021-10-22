@@ -35,22 +35,15 @@ CREATE TABLE IF NOT EXISTS documents (
     );
 
 CREATE VIEW data_record_view AS (
-    SELECT dc.id AS "Document ID",
-           dc.prop_id AS "Property ID",
+    SELECT pr.id AS "Property ID",
            pr.flat_num AS "Flat number",
            pr.street AS "Street",
            pr.post_code AS "Post code",
            pr.city AS "City",
            tn.first_name AS "First name",
            tn.last_name AS "Last name",
-           tn.email AS "Email",
-           dc.document AS "Document"
-    FROM documents AS dc
-        JOIN tenants AS tn
-            ON dc.prop_id = tn.prop_id
-            AND dc.tenant_id = tn.id
+           tn.email AS "Email"
+    FROM tenants AS tn
         JOIN properties AS pr
             ON tn.prop_id = pr.id
-        JOIN landlords AS ll
-            ON pr.landlord_id = ll.id
     );
