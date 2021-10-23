@@ -145,7 +145,7 @@ class RecordList(tk.Frame):
         'Street': {'label': 'Street', 'width': 180},
         'Post code': {'label': 'Post code', 'anchor': tk.CENTER, 'width': 80},
         'City': {'label': 'City', 'width': 80},
-        'First name': {'label': 'First name', 'width': 80},
+        'First name': {'label': 'First name', 'width': 100},
         'Last name': {'label': 'Last name', 'width': 100},
         'Email': {'label': 'Email', 'width': 220},
     }
