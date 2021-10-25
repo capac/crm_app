@@ -46,8 +46,8 @@ class SQLModel:
     fields = {
         # these values are populated by the lookup tables:
         # landlords, properties and tenants
-        'Landlord ID': {'req': True, 'type': FT.string_list, 'values': []},
-        'Property ID': {'req': True, 'type': FT.string_list, 'values': []},
+        'Landlord ID': {'req': True, 'type': FT.string},
+        'Property ID': {'req': True, 'type': FT.string},
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
@@ -76,10 +76,10 @@ class SQLModel:
     def __init__(self, host, database, user, password):
         self.connection = pg.connect(host=host, database=database, user=user,
                                      password=password, cursor_factory=DictCursor)
-        landlords = self.query("SELECT id FROM landlords ORDER BY id")
-        self.fields['Landlord ID']['values'] = [x['id'] for x in landlords]
-        prop_ids = self.query("SELECT id FROM properties ORDER BY id")
-        self.fields['Property ID']['values'] = [x['id'] for x in prop_ids]
+        # landlords = self.query("SELECT id FROM landlords ORDER BY id")
+        # self.fields['Landlord ID']['values'] = [x['id'] for x in landlords]
+        # prop_ids = self.query("SELECT id FROM properties ORDER BY id")
+        # self.fields['Property ID']['values'] = [x['id'] for x in prop_ids]
 
     def query(self, query, parameters=None):
         cursor = self.connection.cursor()
@@ -93,12 +93,12 @@ class SQLModel:
             if cursor.description is not None:
                 return cursor.fetchall()
 
-    def get_all_properties(self):
+    def get_all_records(self):
         query = ('SELECT * FROM data_record_view '
                  'ORDER BY "Property ID"')
         return self.query(query)
 
-    def get_property(self, prop_id):
+    def get_record(self, prop_id):
         query = ('SELECT * FROM data_record_view '
                  'WHERE "Property ID" = %(prop_id)s')
         result = self.query(query, {"prop_id": prop_id})
@@ -129,9 +129,11 @@ class SQLModel:
         # if property doesn't exists, add new property record
         if not self.get_property(prop_id):
             property_query = self.propriety_insert_query
+            self.last_write = 'insert'
         # if record exists, remove old property record
         else:
             property_query = self.propriety_delete_query
+            self.last_write = 'delete'
 
         self.query(property_query, record)
 
@@ -140,6 +142,8 @@ class SettingsModel:
     '''A model for saving settings'''
 
     variables = {
+        # ('aqua', 'clam', 'alt', 'default', 'classic')
+        'theme': {'type': 'str', 'value': 'aqua'},
         'db_host': {'type': 'str', 'value': 'localhost'},
         'db_name': {'type': 'str', 'value': 'housing_management'},
     }
@@ -147,8 +151,26 @@ class SettingsModel:
     def __init__(self, filename='settings.json', path='~'):
         # determine the file path
         self.filepath = os.path.join(os.path.expanduser(path), filename)
+
         # load in saved values
         self.load()
+
+    def set(self, key, value):
+        '''Set a variable value'''
+
+        if (
+            key in self.variables and type(value).__name__ == self.variables[key]['type']
+        ):
+            self.variables[key]['value'] = value
+        else:
+            raise ValueError('Bad key or wrong variable type')
+
+    def save(self, settings=None):
+        '''Save the current settings to the file'''
+
+        json_string = json.dumps(self.variables)
+        with open(self.filepath, 'w') as fh:
+            fh.write(json_string)
 
     def load(self):
         '''Load the settings from the file'''
@@ -165,16 +187,3 @@ class SettingsModel:
             if key in raw_values and 'value' in raw_values[key]:
                 raw_value = raw_values[key]['value']
                 self.variables[key]['value'] = raw_value
-
-    def save(self, settings=None):
-        json_string = json.dumps(self.variables)
-        with open(self.filepath, 'w') as fh:
-            fh.write(json_string)
-
-    def set(self, key, value):
-        if (
-            key in self.variables and type(value).__name__ == self.variables[key]['type']
-        ):
-            self.variables[key]['value'] = value
-        else:
-            raise ValueError('Bad key or wrong variable type')
