@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter.simpledialog import Dialog
 from . import widgets as w
-from cfi_codes import property_ids, landlord_company_ids
+# from cfi_codes import property_ids, landlord_company_ids
 
 
 class MainMenu(tk.Menu):
@@ -60,24 +60,31 @@ class DataRecordForm(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.callbacks = callbacks
 
+        self.current_record = None
+
         # a dictionary to keep track of input widgets
         self.inputs = {}
-        # property id codes for CFI
+
+        # build the form
+        self.record_label = ttk.Label(self)
+        self.record_label.grid(row=0, column=0)
+
+        # office information
         officeinfo = tk.LabelFrame(self, text='Office information')
 
-        # Office information
+        # line 1
         self.inputs['Property ID'] = w.LabelInput(officeinfo, 'Property ID',
-                                                  field_spec=fields['Property ID'],
-                                                  input_args={'values': property_ids()})
+                                                  field_spec=fields['Property ID'])
         self.inputs['Property ID'].grid(row=0, column=0)
         self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
-                                                  field_spec=fields['Landlord ID'],
-                                                  input_args={'values': landlord_company_ids()})
+                                                  field_spec=fields['Landlord ID'])
         self.inputs['Landlord ID'].grid(row=0, column=1)
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
-        # Property information
+        # property information
         propertyinfo = tk.LabelFrame(self, text='Property information')
+
+        # line 2
         self.inputs['Flat number'] = w.LabelInput(propertyinfo, 'Flat number',
                                                   field_spec=fields['Flat number'])
         self.inputs['Flat number'].grid(row=0, column=0)
@@ -92,8 +99,10 @@ class DataRecordForm(tk.Frame):
         self.inputs['City'].grid(row=0, column=3)
         propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
-        # Tenant information
+        # tenant information
         tenantinfo = tk.LabelFrame(self, text='Tenant information')
+
+        # line 3
         self.inputs['First name'] = w.LabelInput(tenantinfo, 'First name',
                                                  field_spec=fields['First name'])
         self.inputs['First name'].grid(row=0, column=0)
@@ -105,23 +114,47 @@ class DataRecordForm(tk.Frame):
         self.inputs['Email'].grid(row=0, column=2)
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
-        # operations section
-        self.savebutton = ttk.Button(self, text='Save',
-                                     command=self.callbacks['on_save'])
-        self.savebutton.grid(row=3, column=0, padx=10, pady=(10, 0), sticky=(tk.W))
+        # command section
+        command_section = tk.LabelFrame(self, text='Commands')
+        self.savebutton = w.LabelInput(command_section, 'Save',
+                                       input_class=ttk.Button,
+                                       input_var=self.callbacks['on_save'])
+        self.savebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
+        self.updatebutton = w.LabelInput(command_section, 'Update',
+                                         input_class=ttk.Button,
+                                         input_var=self.callbacks['on_update'])
+        self.updatebutton.grid(row=0, column=1, padx=10, pady=(10, 0))
+        command_section.grid(row=3, column=0, sticky=tk.W)
+        command_section.columnconfigure(0, weight=1)
 
         # set default tk entry values to empty strings
         self.reset()
 
     def get(self):
+        '''Retrieve data from Tkinter and place it in regular Python objects'''
+
         data = {}
         for key, widget in self.inputs.items():
             data[key] = widget.get()
         return data
 
+    def focus_next_empty(self):
+        for labelwidget in self.inputs.values():
+            if (labelwidget.get() == ''):
+                labelwidget.input.focus()
+                break
+
     def reset(self):
+        '''Resets the form entries'''
+
+        # clear the current record id
+        self.current_record = None
+
+        # clear all values
         for widget in self.inputs.values():
             widget.set('')
+
+        self.focus_next_empty()
 
     def get_errors(self):
         '''Get a list of field errors in the form'''
@@ -133,6 +166,20 @@ class DataRecordForm(tk.Frame):
             if widget.error.get():
                 errors[key] = widget.error.get()
         return errors
+
+    def load_record(self, rowkey, data=None):
+        self.current_record = rowkey
+        if rowkey is None:
+            self.reset()
+            self.record_label.config(text='New record')
+        else:
+            self.record_label.config(text='Record for Property ID: {}'.format(*rowkey))
+            for key, widget in self.inputs.items():
+                self.inputs[key].set(data.get(key, ''))
+                try:
+                    widget.input.trigger_focusout_validation()
+                except AttributeError:
+                    pass
 
 
 class RecordList(tk.Frame):
@@ -196,7 +243,11 @@ class RecordList(tk.Frame):
         self.treeview.tag_configure('updated', background='lightblue')
 
         # bind double-clicks
-        self.treeview.bind('<<TreeviewOpen>>', self.on_open_record)
+        self.treeview.bind('<<TreeviewSelect>>', self.on_open_record)
+
+    def on_open_record(self, *args):
+        selected_id = self.treeview.selection()[0]
+        self.callbacks['on_open_record'](selected_id.split('|')[0])
 
     def populate(self, rows):
         '''Clear the treeview and write the supplied data rows to it'''
@@ -210,6 +261,7 @@ class RecordList(tk.Frame):
                       str(rowdata['Street']), str(rowdata['Post code']),
                       str(rowdata['City']), str(rowdata['First name']),
                       str(rowdata['Last name']), str(rowdata['Email']))
+            # print(f'rowkey: {rowkey}')
             values = [rowdata[key] for key in valuekeys]
             if self.inserted and rowkey in self.inserted:
                 tag = 'inserted'
@@ -221,16 +273,13 @@ class RecordList(tk.Frame):
             self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
                                  values=values, tag=tag)
 
+            # selects automatically the first row,
+            # to make selections keyboard-friendly
             if len(rows) > 0:
                 firstrow = self.treeview.identify_row(0)
                 self.treeview.focus_set()
                 self.treeview.selection_set(firstrow)
                 self.treeview.focus(firstrow)
-
-    def on_open_record(self, *args):
-
-        selected_id = self.treeview.selection()[0]
-        self.callbacks['on_open_record'](selected_id.split('|'))
 
 
 class LoginDialog(Dialog):
