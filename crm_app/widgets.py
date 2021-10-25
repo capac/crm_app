@@ -9,21 +9,33 @@ class ValidatedMixin:
     def __init__(self, *args, error_var=None, **kwargs):
         self.error = error_var or tk.StringVar()
         super().__init__(*args, **kwargs)
+
         vcmd = self.register(self._validate)
         invcmd = self.register(self._invalid)
 
+        style = ttk.Style()
+        widget_class = self.winfo_class()
+        validated_style = 'ValidatedInput.' + widget_class
+        style.map(
+            validated_style,
+            foreground=[('invalid', 'white'), ('!invalid', 'black')],
+            fieldbackground=[('invalid', 'darkred'), ('!invalid', 'white')]
+        )
+
         self.config(
+            style=validated_style,
             validate='all',
             validatecommand=(vcmd, '%P', '%s', '%S', '%V', '%i', '%d'),
             invalidcommand=(invcmd, '%P', '%s', '%S', '%V', '%i', '%d')
         )
 
-    def _toggle_error(self, on=False):
-        self.config(foreground=('red' if on else 'black'))
-
     # valid event
     def _validate(self, proposed, current, char, event, index, action):
-        self._toggle_error(False)
+        '''
+        The validation method, don't override this method,
+        override the _key_validate and _focus_validate methods.
+        '''
+
         self.error.set('')
         valid = True
         if event == 'focusout':
@@ -50,9 +62,13 @@ class ValidatedMixin:
                               action=action)
 
     def _focusout_invalid(self, **kwargs):
-        self._toggle_error(True)
+        '''Handle invalid data on a focus event'''
+
+        pass
 
     def _key_invalid(self, **kwargs):
+        ''''Handle invalid data on a key event. By default we want to do nothing'''
+
         pass
 
     def trigger_focusout_validation(self):
