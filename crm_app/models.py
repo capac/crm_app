@@ -46,8 +46,8 @@ class SQLModel:
     fields = {
         # these values are populated by the lookup tables:
         # landlords, properties and tenants
-        'Landlord ID': {'req': True, 'type': FT.string},
         'Property ID': {'req': True, 'type': FT.string},
+        'Landlord ID': {'req': True, 'type': FT.string},
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
