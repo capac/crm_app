@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS documents (
 CREATE VIEW data_record_view AS (
     SELECT dc.id AS "Document ID",
            dc.prop_id AS "Property ID",
+           ll.id AS "Landlord ID",
            pr.flat_num AS "Flat number",
            pr.street AS "Street",
            pr.post_code AS "Post code",
