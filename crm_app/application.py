@@ -19,11 +19,14 @@ class Application(tk.Tk):
         super().__init__(*args, **kwargs)
 
         # application title
-        self.title('Data Entry Form')
+        self.title('CRM Application')
         self.resizable(width=False, height=False)
 
         # application name
-        ttk.Label(self, text='Data Query Form', font=('TkDefaultFont', 16)).grid(row=0)
+        ttk.Label(self, text='Data Record List', font=('TkDefaultFont', 16)).grid(row=0, padx=60)
+
+        self.inserted_rows = []
+        self.updated_rows = []
 
         # filename variable
         datestring = datetime.today().strftime('%Y-%m-%d')
@@ -35,40 +38,88 @@ class Application(tk.Tk):
         self.settings_model = m.SettingsModel(path=config_dir)
         self.load_settings()
 
+        # setting style
+        style = ttk.Style()
+        theme = self.settings.get('theme').get()
+        if theme in style.theme_names():
+            style.theme_use(theme)
+
         # database login
         self.database_login()
         if not hasattr(self, 'data_model'):
             self.destroy()
             return
 
-        # settings
-        self.settings = {}
-
         # create data model
         self.callbacks = {
+            # menu bar callbacks
+            'file->new_property': self.add_property,
+            'file->delete_property': self.delete_property,
             'file->import': self.on_file_import,
             'file->export': self.on_file_export,
-            'file->quit': self.quit
+            'file->quit': self.quit,
+            # method callbacks
+            'on_open_record': self.open_record,
+            'on_save': self.on_save,
+            'on_update': self.on_update,
         }
-        menu = v.MainMenu(self, self.settings, self.callbacks)
+
+        menu = v.MainMenu(self, self.callbacks)
         self.config(menu=menu)
 
-        # data form
-        self.recordform = v.DataRecordForm(self, m.CSVModel.fields, self.settings)
-        self.recordform.grid(row=1, padx=10)
+        # treeview record form
+        self.recordlist = v.RecordList(self, self.callbacks,
+                                       inserted=self.inserted_rows,
+                                       updated=self.updated_rows,)
+        self.recordlist.grid(row=1, padx=10, sticky='NSEW')
+        self.recordlist.columnconfigure(0, weight=1)
+        self.populate_recordlist()
 
-        # save button
-        self.savebutton = ttk.Button(self, text='Save to CSV', command=self.on_save)
-        self.savebutton.grid(row=2, padx=10, pady=(10, 0), sticky=(tk.E))
+        # data record form
+        self.recordform = v.DataRecordForm(self, self.data_model.fields,
+                                           self.callbacks)
+        self.recordform.grid(row=2, padx=10, sticky='NSEW')
+        self.recordform.columnconfigure(0, weight=1)
 
         # status bar
         self.status = tk.StringVar()
         self.statusbar = ttk.Label(self, textvariable=self.status)
-        self.statusbar.grid(row=3, padx=10, pady=(0, 10), sticky=(tk.W + tk.E))
+        self.statusbar.grid(row=3, padx=10, sticky=('WE'))
+        self.statusbar.columnconfigure(0, weight=1)
+
         self.records_saved = 0
 
+    def populate_recordlist(self):
+        try:
+            rows = self.data_model.get_all_records()
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem reading database',
+                detail=str(e)
+            )
+        else:
+            self.recordlist.populate(rows)
+
+    def open_record(self, rowkey=None):
+        '''Rowkey simply contains prop_id'''
+
+        if rowkey is None:
+            record = None
+        else:
+            try:
+                # print(f'rowkey: {rowkey}')
+                record = self.data_model.get_record(rowkey)
+                # print(f'record: {record}')
+            except Exception as e:
+                messagebox.showerror(title='Error', message='Problem reading database',
+                                     detail=str(e))
+                return
+        self.recordform.load_record(rowkey, record)
+        self.recordform.tkraise()
+
     def on_save(self):
-        '''Handles save button clicks'''
+        '''Handles save button clicks to database'''
 
         # check for errors first
         errors = self.recordform.get_errors()
@@ -81,15 +132,28 @@ class Application(tk.Tk):
             messagebox.showerror(title='Error', message=message, detail=detail)
             return False
 
-        filename = self.filename.get()
-        model = m.CSVModel(filename)
-
         # get data
         data = self.recordform.get()
-        model.save_record(data)
-        self.records_saved += 1
-        self.status.set(f'{self.records_saved} record(s) saved this session')
-        self.recordform.reset()
+        print(data)
+        try:
+            self.data_model.update_property(data)
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem saving record',
+                detail=str(e)
+            )
+            self.status.set('Problem saving record')
+        else:
+            self.records_saved += 1
+            self.status.set(f'{self.records_saved} record(s) saved this session')
+            key = (data['First name'], data['Last name'], data['Email'], data['Property ID'])
+            if self.data_model.last_write == 'update':
+                self.updated_rows.append(key)
+            else:
+                self.inserted_rows.append(key)
+            if self.data_model.last_write == 'insert':
+                self.recordform.reset()
 
     # import records from CSV file to database
     def on_file_import(self):
@@ -114,6 +178,21 @@ class Application(tk.Tk):
         )
         if filename:
             self.filename.set(filename)
+
+    def add_property(self):
+        '''Adds new property into database'''
+
+        pass
+
+    def on_update(self):
+        '''Updates information in the database'''
+
+        pass
+
+    def delete_property(self):
+        '''Removes property from database'''
+
+        pass
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
@@ -145,10 +224,10 @@ class Application(tk.Tk):
     def database_login(self):
         '''Try to login to the database and create self.data_model'''
 
-        error = ''
         db_host = self.settings['db_host'].get()
         db_name = self.settings['db_name'].get()
         title = f'Login to {db_name} at {db_host}'
+        error = ''
         while True:
             login = v.LoginDialog(self, title, error)
             if not login.result:
