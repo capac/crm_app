@@ -242,9 +242,7 @@ class RecordList(tk.Frame):
         self.treeview.bind('<<TreeviewSelect>>', self.on_open_record)
 
     def on_open_record(self, *args):
-        # print(f'self.treeview.selection(): {self.treeview.selection()}')
         selected_id = self.treeview.selection()[0]
-        # print(f'selected_id: {selected_id}')
         self.callbacks['on_open_record'](selected_id.split('|')[0])
 
     def populate(self, rows):
