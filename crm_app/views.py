@@ -70,7 +70,7 @@ class DataRecordForm(tk.Frame):
         self.record_label.grid(row=0, column=0)
 
         # office information
-        officeinfo = tk.LabelFrame(self, text='Office information')
+        officeinfo = tk.LabelFrame(self, text='Office information', padx=5, pady=5)
 
         # line 1
         self.inputs['Property ID'] = w.LabelInput(officeinfo, 'Property ID',
@@ -82,7 +82,7 @@ class DataRecordForm(tk.Frame):
         officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
         # property information
-        propertyinfo = tk.LabelFrame(self, text='Property information')
+        propertyinfo = tk.LabelFrame(self, text='Property information', padx=5, pady=5)
 
         # line 2
         self.inputs['Flat number'] = w.LabelInput(propertyinfo, 'Flat number',
@@ -100,7 +100,7 @@ class DataRecordForm(tk.Frame):
         propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # tenant information
-        tenantinfo = tk.LabelFrame(self, text='Tenant information')
+        tenantinfo = tk.LabelFrame(self, text='Tenant information', padx=5, pady=5)
 
         # line 3
         self.inputs['First name'] = w.LabelInput(tenantinfo, 'First name',
@@ -115,7 +115,7 @@ class DataRecordForm(tk.Frame):
         tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
         # command section
-        command_section = tk.LabelFrame(self, text='Commands')
+        command_section = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
         self.savebutton = w.LabelInput(command_section, 'Save',
                                        input_class=ttk.Button,
                                        input_var=self.callbacks['on_save'])
@@ -294,15 +294,22 @@ class LoginDialog(Dialog):
     def body(self, parent):
         lf = tk.Frame(self)
         self.geometry('280x180')
-        ttk.Label(lf, text='Login to database', font='Sans 20').grid()
+        ttk.Label(lf, text='Login to database',
+                  font='Sans 20').grid(row=0)
+
+        # ttk.Style().configure('Entry.field', background='white',
+        #                       foreground='black')
+        ttk.Style().configure('err.TLabel', background='darkred',
+                              foreground='white')
         if self.error.get():
-            tk.Label(lf, textvariable=self.error, bg='darkred', fg='white').grid()
-        ttk.Label(lf, text='User name:').grid()
+            ttk.Label(lf, textvariable=self.error,
+                      style='err.TLabel').grid(row=1)
+        ttk.Label(lf, text='User name:').grid(row=2)
         self.username_inp = ttk.Entry(lf, textvariable=self.user)
-        self.username_inp.grid()
-        ttk.Label(lf, text='Password:').grid()
+        self.username_inp.grid(row=3)
+        ttk.Label(lf, text='Password:').grid(row=4)
         self.password_inp = ttk.Entry(lf, show='*', textvariable=self.pw)
-        self.password_inp.grid()
+        self.password_inp.grid(row=5)
         lf.pack()
         return self.username_inp
 
