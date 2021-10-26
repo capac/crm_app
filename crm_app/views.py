@@ -3,7 +3,6 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter.simpledialog import Dialog
 from . import widgets as w
-# from cfi_codes import property_ids, landlord_company_ids
 
 
 class MainMenu(tk.Menu):

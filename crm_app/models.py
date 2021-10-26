@@ -46,8 +46,8 @@ class SQLModel:
     fields = {
         # these values are populated by the lookup tables:
         # landlords, properties and tenants
-        'Property ID': {'req': True, 'type': FT.string},
-        'Landlord ID': {'req': True, 'type': FT.string},
+        'Property ID': {'req': True, 'type': FT.string_list, 'values': []},
+        'Landlord ID': {'req': True, 'type': FT.string_list, 'values': []},
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
@@ -76,10 +76,10 @@ class SQLModel:
     def __init__(self, host, database, user, password):
         self.connection = pg.connect(host=host, database=database, user=user,
                                      password=password, cursor_factory=DictCursor)
-        # landlords = self.query("SELECT id FROM landlords ORDER BY id")
-        # self.fields['Landlord ID']['values'] = [x['id'] for x in landlords]
-        # prop_ids = self.query("SELECT id FROM properties ORDER BY id")
-        # self.fields['Property ID']['values'] = [x['id'] for x in prop_ids]
+        landlords = self.query("SELECT id FROM landlords ORDER BY id")
+        self.fields['Landlord ID']['values'] = [x['id'] for x in landlords]
+        prop_ids = self.query("SELECT id FROM properties ORDER BY id")
+        self.fields['Property ID']['values'] = [x['id'] for x in prop_ids]
 
     def query(self, query, parameters=None):
         cursor = self.connection.cursor()
