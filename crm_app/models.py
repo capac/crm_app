@@ -104,13 +104,12 @@ class SQLModel:
         result = self.query(query, {"prop_id": prop_id})
         return result[0] if result else {}
 
-    def update_tenant(self, record):
+    def change_tenant(self, record):
         # add or update tenant information
         prop_id = record['Property ID']
-
         # if the property already contains a tenant, update
         # the property with the new tenant information
-        if self.get_property(prop_id):
+        if self.get_record(prop_id):
             tenant_query = self.tenants_update_query
             self.last_write = 'update'
         # if the property exists but doesn't have any tenant
