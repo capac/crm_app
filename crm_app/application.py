@@ -59,9 +59,8 @@ class Application(tk.Tk):
             'file->export': self.on_file_export,
             'file->quit': self.quit,
             # method callbacks
-            'on_open_record': self.open_record,
             'on_save': self.on_save,
-            'on_update': self.on_update,
+            'on_open_record': self.open_record,
         }
 
         menu = v.MainMenu(self, self.callbacks)
@@ -119,7 +118,7 @@ class Application(tk.Tk):
         self.recordform.tkraise()
 
     def on_save(self):
-        '''Handles save button clicks to database'''
+        '''Handles saves to the database button clicks'''
 
         # check for errors first
         errors = self.recordform.get_errors()
@@ -136,7 +135,7 @@ class Application(tk.Tk):
         data = self.recordform.get()
         print(data)
         try:
-            self.data_model.update_property(data)
+            self.data_model.change_tenant(data)
         except Exception as e:
             messagebox.showerror(
                 title='Error',
@@ -147,11 +146,14 @@ class Application(tk.Tk):
         else:
             self.records_saved += 1
             self.status.set(f'{self.records_saved} record(s) saved this session')
-            key = (data['First name'], data['Last name'], data['Email'], data['Property ID'])
+            key = (data['Property ID'], data['First name'], data['Last name'], data['Email'])
             if self.data_model.last_write == 'update':
                 self.updated_rows.append(key)
             else:
+                # new property with tenant added
                 self.inserted_rows.append(key)
+            self.populate_recordlist()
+            # reset form only when appending records
             if self.data_model.last_write == 'insert':
                 self.recordform.reset()
 
@@ -181,11 +183,6 @@ class Application(tk.Tk):
 
     def add_property(self):
         '''Adds new property into database'''
-
-        pass
-
-    def on_update(self):
-        '''Updates information in the database'''
 
         pass
 
