@@ -66,7 +66,7 @@ class DataRecordForm(tk.Frame):
 
         # build the form
         self.record_label = ttk.Label(self)
-        self.record_label.grid(row=0, column=0)
+        self.record_label.grid(row=0, column=0, padx=2, pady=(4, 0))
 
         # office information
         officeinfo = tk.LabelFrame(self, text='Office information', padx=5, pady=5)
@@ -78,7 +78,7 @@ class DataRecordForm(tk.Frame):
         self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
                                                   field_spec=fields['Landlord ID'])
         self.inputs['Landlord ID'].grid(row=0, column=1)
-        officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
+        officeinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # property information
         propertyinfo = tk.LabelFrame(self, text='Property information', padx=5, pady=5)
@@ -96,7 +96,7 @@ class DataRecordForm(tk.Frame):
         self.inputs['City'] = w.LabelInput(propertyinfo, 'City',
                                            field_spec=fields['City'])
         self.inputs['City'].grid(row=0, column=3)
-        propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
+        propertyinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
         # tenant information
         tenantinfo = tk.LabelFrame(self, text='Tenant information', padx=5, pady=5)
@@ -111,15 +111,15 @@ class DataRecordForm(tk.Frame):
         self.inputs['Email'] = w.LabelInput(tenantinfo, 'Email',
                                             field_spec=fields['Email'])
         self.inputs['Email'].grid(row=0, column=2)
-        tenantinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
+        tenantinfo.grid(row=3, column=0, sticky=(tk.W + tk.E))
 
         # command section
         command_section = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
         self.updatebutton = w.LabelInput(command_section, 'Update',
                                          input_class=ttk.Button,
-                                         input_var=self.callbacks['on_update'])
+                                         input_var=self.callbacks['on_save'])
         self.updatebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
-        command_section.grid(row=3, column=0, sticky=tk.W)
+        command_section.grid(row=4, column=0, sticky=tk.W)
         command_section.columnconfigure(0, weight=1)
 
         # set default tk entry values to empty strings
@@ -168,7 +168,7 @@ class DataRecordForm(tk.Frame):
             self.reset()
             self.record_label.config(text='New record')
         else:
-            self.record_label.config(text='Record for Property ID: {}'.format(*rowkey))
+            self.record_label.config(text='Record for Property ID: {}'.format(rowkey))
             for key, widget in self.inputs.items():
                 self.inputs[key].set(data.get(key, ''))
                 try:
@@ -238,11 +238,13 @@ class RecordList(tk.Frame):
         self.treeview.tag_configure('inserted', background='lightgreen')
         self.treeview.tag_configure('updated', background='lightblue')
 
-        # bind double-clicks
+        # bind selection
         self.treeview.bind('<<TreeviewSelect>>', self.on_open_record)
 
     def on_open_record(self, *args):
+        # print(f'self.treeview.selection(): {self.treeview.selection()}')
         selected_id = self.treeview.selection()[0]
+        # print(f'selected_id: {selected_id}')
         self.callbacks['on_open_record'](selected_id.split('|')[0])
 
     def populate(self, rows):
