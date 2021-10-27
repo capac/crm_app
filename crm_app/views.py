@@ -242,8 +242,13 @@ class RecordList(tk.Frame):
         self.treeview.bind('<<TreeviewSelect>>', self.on_open_record)
 
     def on_open_record(self, *args):
-        selected_id = self.treeview.selection()[0]
-        self.callbacks['on_open_record'](selected_id.split('|')[0])
+        try:
+            selected_id = self.treeview.selection()[0]
+            self.callbacks['on_open_record'](selected_id.split('|')[0])
+        # quick fix when window loses focus and no line is selected,
+        # a better fix is to find a way to keep the line selected
+        except IndexError:
+            pass
 
     def populate(self, rows):
         '''Clear the treeview and write the supplied data rows to it'''
