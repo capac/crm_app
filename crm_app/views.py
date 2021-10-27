@@ -22,6 +22,16 @@ class MainMenu(tk.Menu):
         file_menu = tk.Menu(self, tearoff=False)
         file_menu.add_command(
             # 8230: ASCII value for horizontal ellipsis
+            label='Add property'+chr(8230),
+            command=callbacks['file->add_property']
+            )
+        file_menu.add_command(
+            # 8230: ASCII value for horizontal ellipsis
+            label='Delete property'+chr(8230),
+            command=callbacks['file->delete_property']
+            )
+        file_menu.add_command(
+            # 8230: ASCII value for horizontal ellipsis
             label='Import file'+chr(8230),
             command=callbacks['file->import']
             )
