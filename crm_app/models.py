@@ -61,15 +61,17 @@ class SQLModel:
     }
 
     # insert tenant in existing property
-    tenants_insert_query = ('INSERT INTO tenants VALUES (%(Property ID)s, %(First name)s, '
-                            '%(Last name)s, %(Email)s)')
+    tenants_insert_query = ('INSERT INTO tenants VALUES (%(Property ID)s, '
+                            '%(First name)s, %(Last name)s, %(Email)s)')
     # update tenant in existing property
-    tenants_update_query = ('UPDATE tenants SET first_name=%(First name)s, last_name=%(Last name)s, '
-                            'email=%(Email)s WHERE prop_id = %(Property ID)s')
+    tenants_update_query = ('UPDATE tenants SET first_name=%(First name)s, '
+                            'last_name=%(Last name)s, email=%(Email)s WHERE '
+                            'prop_id = %(Property ID)s')
 
     # insert new property, used rarely
-    propriety_insert_query = ('INSERT INTO properties VALUES (%(Property ID)s, %(Landlord ID)s, '
-                              '%(Flat number)s, %(Street)s, %(Post code)s, %(City)s)')
+    propriety_insert_query = ('INSERT INTO properties VALUES (%(Property ID)s, '
+                              '%(Landlord ID)s, %(Flat number)s, %(Street)s, '
+                              '%(Post code)s, %(City)s)')
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
 
@@ -120,21 +122,36 @@ class SQLModel:
 
         self.query(tenant_query, record)
 
-    def update_property(self, record):
-        # add or update property information
+    def add_property(self, record):
+        # add property information
+        prop_id = record['Property ID']
+        ll_id = record['Landlord ID']
+        flat_num = record['Flat number']
+        street = record['Street']
+        post_code = record['Post code']
+        city = record['City']
+
+        print(f'prop_id: {prop_id}')
+        property_query = self.propriety_insert_query
+        self.last_write = 'insert'
+
+        result = self.query(property_query, {'prop_id': prop_id, 'll_id': ll_id,
+                                             'flat_num': flat_num, 'street': street,
+                                             'post_code': post_code, 'city': city})
+        print(f'result: {result}')
+        return result[0] if result else {}
+
+    def delete_propriety(self, record):
+        # delete property information
         prop_id = record['Property ID']
         print(f'prop_id: {prop_id}')
-        print(f'self.get_property(prop_id): {self.get_property(prop_id)}')
-        # if property doesn't exists, add new property record
-        if not self.get_property(prop_id):
-            property_query = self.propriety_insert_query
-            self.last_write = 'insert'
         # if record exists, remove old property record
-        else:
-            property_query = self.propriety_delete_query
-            self.last_write = 'delete'
+        property_query = self.propriety_delete_query
+        self.last_write = 'delete'
 
-        self.query(property_query, record)
+        result = self.query(property_query, {'prop_id': prop_id})
+        print(f'result: {result}')
+        return result[0] if result else {}
 
 
 class SettingsModel:
