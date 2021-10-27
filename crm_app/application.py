@@ -53,7 +53,7 @@ class Application(tk.Tk):
         # create data model
         self.callbacks = {
             # menu bar callbacks
-            'file->new_property': self.add_property,
+            'file->add_property': self.add_property,
             'file->delete_property': self.delete_property,
             'file->import': self.on_file_import,
             'file->export': self.on_file_export,
