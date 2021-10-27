@@ -149,10 +149,9 @@ class LabelInput(tk.Frame):
         else:
             self.variable = input_var
 
-        if input_class in (ttk.Checkbutton, ttk.Button, ttk.Radiobutton):
+        if input_class == ttk.Button:
             input_args['text'] = label
             input_args['command'] = input_var
-            # input_args['variable'] = self.variable
         else:
             self.label = ttk.Label(self, text=label, **label_args)
             self.label.grid(row=0, column=0, sticky=(tk.W + tk.E))
@@ -182,15 +181,8 @@ class LabelInput(tk.Frame):
             return ''
 
     def set(self, value, *args, **kwargs):
-        if type(self.variable) == tk.BooleanVar:
-            self.variable.set(bool(value))
-        elif self.variable:
+        if self.variable:
             self.variable.set(value, *args, **kwargs)
-        elif type(self.input) in (ttk.Checkbutton, ttk.Radiobutton):
-            if value:
-                self.input.select()
-            else:
-                self.input.deselect()
         elif type(self.input) == tk.Text:
             self.input.delete('1.0', tk.END)
             self.input.insert('1.0', value)
