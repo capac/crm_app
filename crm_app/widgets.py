@@ -102,6 +102,7 @@ class ValidatedCombobox(ValidatedMixin, ttk.Combobox):
         if action == '0':
             self.set('')
             return True
+
         # get our value list
         values = self.cget('values')
         # do a case-insensitive match against the entered text
@@ -153,7 +154,7 @@ class LabelInput(tk.Frame):
             input_args['text'] = label
             input_args['command'] = input_var
         else:
-            self.label = ttk.Label(self, text=label, **label_args)
+            self.label = ttk.Label(self, text=label, width=25, **label_args)
             self.label.grid(row=0, column=0, sticky=(tk.W + tk.E))
             input_args['textvariable'] = self.variable
 
