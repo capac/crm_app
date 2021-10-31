@@ -60,6 +60,7 @@ class Application(tk.Tk):
             'file->quit': self.quit,
             # method callbacks
             'on_save': self.on_save,
+            'on_save_property': self.save_property,
             'on_open_record': self.open_record,
         }
 
@@ -133,7 +134,7 @@ class Application(tk.Tk):
 
         # get data
         data = self.recordform.get()
-        print(data)
+        print(f'data: {data}')
         try:
             self.data_model.change_tenant(data)
         except Exception as e:
@@ -149,13 +150,82 @@ class Application(tk.Tk):
             key = (data['Property ID'], data['First name'], data['Last name'], data['Email'])
             if self.data_model.last_write == 'update':
                 self.updated_rows.append(key)
+                print(f'self.updated_rows: {self.updated_rows}')
             else:
                 # new property with tenant added
                 self.inserted_rows.append(key)
+                print(f'self.inserted_rows: {self.inserted_rows}')
             self.populate_recordlist()
             # reset form only when appending records
             if self.data_model.last_write == 'insert':
                 self.recordform.reset()
+
+    def add_property(self):
+        '''Adds new property into database'''
+
+        # opens window for new property entry
+        window = tk.Toplevel(self)
+        window.resizable(width=False, height=False)
+        window.title('Add property')
+
+        # property form
+        self.propertyform = v.ChangePropertyForm(window, self.data_model.fields, self.callbacks)
+        self.propertyform.grid(row=0, padx=5, sticky='W')
+        self.propertyform.columnconfigure(0, weight=1)
+
+        # status bar
+        self.status = tk.StringVar()
+        self.statusbar = ttk.Label(window, textvariable=self.status)
+        self.statusbar.grid(row=1, padx=10, sticky=('WE'))
+        self.statusbar.columnconfigure(0, weight=1)
+
+    def save_property(self):
+        '''Save new property to the database'''
+
+        # check for errors first
+        errors = self.propertyform.get_errors()
+        if errors:
+            message = 'Cannot save record'
+            detail = 'The following fields have errors: \n * {}'.format('\n * '.join(errors.keys()))
+            self.status.set(
+                f'''Cannot save, error in fields: {', '.join(errors.keys())}'''
+            )
+            messagebox.showerror(title='Error', message=message, detail=detail)
+            return False
+
+        # get data
+        data = self.propertyform.get()
+        print(data)
+        try:
+            self.data_model.add_property(data)
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem saving record',
+                detail=str(e)
+            )
+            self.status.set('Problem saving record')
+        else:
+            self.records_saved += 1
+            self.status.set(f'{self.records_saved} record(s) saved this session')
+            key = (data['Property ID'], data['Landlord ID'], data['Flat number'],
+                   data['Street'], data['Post code'], data['City'])
+            if self.data_model.last_write == 'update':
+                self.updated_rows.append(key)
+                print(f'self.updated_rows: {self.updated_rows}')
+            else:
+                # new property with tenant added
+                self.inserted_rows.append(key)
+                print(f'self.inserted_rows: {self.inserted_rows}')
+            self.populate_recordlist()
+            # reset form only when appending records
+            if self.data_model.last_write == 'insert':
+                self.recordform.reset()
+
+    def delete_property(self):
+        '''Removes property from database'''
+
+        pass
 
     # import records from CSV file to database
     def on_file_import(self):
@@ -180,16 +250,6 @@ class Application(tk.Tk):
         )
         if filename:
             self.filename.set(filename)
-
-    def add_property(self):
-        '''Adds new property into database'''
-
-        pass
-
-    def delete_property(self):
-        '''Removes property from database'''
-
-        pass
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
