@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS properties (
     );
 
 CREATE TABLE IF NOT EXISTS tenants (
-    tn_id SERIAL UNIQUE NOT NULL,
     prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id),
     first_name VARCHAR(20),
     last_name VARCHAR(20),
@@ -29,7 +28,6 @@ CREATE TABLE IF NOT EXISTS tenants (
 CREATE TABLE IF NOT EXISTS documents (
     doc_id SERIAL UNIQUE NOT NULL,
     prop_id VARCHAR(10) NOT NULL REFERENCES properties(prop_id),
-    tn_id SERIAL NOT NULL REFERENCES tenants(tn_id),
     doc_title VARCHAR(200),
     PRIMARY KEY(doc_id)
     );
@@ -51,7 +49,6 @@ CREATE VIEW prop_tenant_view AS (
 
 CREATE VIEW doc_tenant_view AS (
     SELECT dc.doc_id AS "Document ID",
-           dc.tn_id AS "Tenant ID",
            dc.prop_id AS "Property ID",
            tn.first_name AS "First name",
            tn.last_name AS "Last name",
