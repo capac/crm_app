@@ -63,7 +63,7 @@ class MainMenu(tk.Menu):
 
 
 class DataRecordForm(tk.Frame):
-    '''The input form for our widgets'''
+    '''The record form for our widgets'''
 
     def __init__(self, parent, fields, callbacks, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -135,20 +135,6 @@ class DataRecordForm(tk.Frame):
         # set default tk entry values to empty strings
         self.reset()
 
-    def get(self):
-        '''Retrieve data from Tkinter and place it in regular Python objects'''
-
-        data = {}
-        for key, widget in self.inputs.items():
-            data[key] = widget.get()
-        return data
-
-    def focus_next_empty(self):
-        for labelwidget in self.inputs.values():
-            if (labelwidget.get() == ''):
-                labelwidget.input.focus()
-                break
-
     def reset(self):
         '''Resets the form entries'''
 
@@ -160,6 +146,20 @@ class DataRecordForm(tk.Frame):
             widget.set('')
 
         self.focus_next_empty()
+
+    def focus_next_empty(self):
+        for labelwidget in self.inputs.values():
+            if (labelwidget.get() == ''):
+                labelwidget.input.focus()
+                break
+
+    def get(self):
+        '''Retrieve data from Tkinter and place it in regular Python objects'''
+
+        data = {}
+        for key, widget in self.inputs.items():
+            data[key] = widget.get()
+        return data
 
     def get_errors(self):
         '''Get a list of field errors in the form'''
@@ -173,18 +173,103 @@ class DataRecordForm(tk.Frame):
         return errors
 
     def load_record(self, rowkey, data=None):
-        self.current_record = rowkey
-        if rowkey is None:
-            self.reset()
-            self.record_label.config(text='New record')
-        else:
-            self.record_label.config(text='Record for Property ID: {}'.format(rowkey))
-            for key, widget in self.inputs.items():
-                self.inputs[key].set(data.get(key, ''))
-                try:
-                    widget.input.trigger_focusout_validation()
-                except AttributeError:
-                    pass
+        self.record_label.config(text='Property ID: {}'.format(rowkey))
+        for key, widget in self.inputs.items():
+            self.inputs[key].set(data.get(key, ''))
+            try:
+                widget.input.trigger_focusout_validation()
+            except AttributeError:
+                pass
+
+
+class ChangePropertyForm(tk.Frame):
+    '''Widget input form for changing property'''
+
+    def __init__(self, parent, fields, callbacks, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.callbacks = callbacks
+
+        # a dictionary to keep track of input widgets
+        self.inputs = {}
+
+        # office information
+        officeinfo = tk.LabelFrame(self, text='Office information', padx=5, pady=5)
+
+        # line 1
+        self.inputs['Property ID'] = w.LabelInput(officeinfo, 'Property ID',
+                                                  field_spec=fields['Property ID'])
+        self.inputs['Property ID'].grid(row=0, column=0)
+        self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
+                                                  field_spec=fields['Landlord ID'])
+        self.inputs['Landlord ID'].grid(row=0, column=1)
+        officeinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
+
+        # property information
+        propertyinfo = tk.LabelFrame(self, text='Property information', padx=5, pady=5)
+
+        # line 2
+        self.inputs['Flat number'] = w.LabelInput(propertyinfo, 'Flat number',
+                                                  field_spec=fields['Flat number'])
+        self.inputs['Flat number'].grid(row=0, column=0)
+        self.inputs['Street'] = w.LabelInput(propertyinfo, 'Street',
+                                             field_spec=fields['Street'])
+        self.inputs['Street'].grid(row=0, column=1)
+        self.inputs['Post code'] = w.LabelInput(propertyinfo, 'Post code',
+                                                field_spec=fields['Post code'])
+        self.inputs['Post code'].grid(row=0, column=2)
+        self.inputs['City'] = w.LabelInput(propertyinfo, 'City',
+                                           field_spec=fields['City'])
+        self.inputs['City'].grid(row=0, column=3)
+        propertyinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
+
+        # command section
+        command_section = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
+        self.savebutton = w.LabelInput(command_section, 'Save property',
+                                       input_class=ttk.Button,
+                                       input_var=self.callbacks['on_save_property'])
+        self.savebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
+        command_section.grid(row=5, column=0, sticky=tk.W)
+        command_section.columnconfigure(0, weight=1)
+
+        # set default tk entry values to empty strings
+        self.reset()
+
+    def get(self):
+        '''Retrieve data from Tkinter and place it in regular Python objects'''
+
+        data = {}
+        for key, widget in self.inputs.items():
+            data[key] = widget.get()
+        return data
+
+    def reset(self):
+        '''Resets the form entries'''
+
+        # clear the current record id
+        self.current_record = None
+
+        # clear all values
+        for widget in self.inputs.values():
+            widget.set('')
+
+        self.focus_next_empty()
+
+    def focus_next_empty(self):
+        for labelwidget in self.inputs.values():
+            if (labelwidget.get() == ''):
+                labelwidget.input.focus()
+                break
+
+    def get_errors(self):
+        '''Get a list of field errors in the form'''
+
+        errors = {}
+        for key, widget in self.inputs.items():
+            if hasattr(widget.input, 'trigger_focusout_validation'):
+                widget.input.trigger_focusout_validation()
+            if widget.error.get():
+                errors[key] = widget.error.get()
+        return errors
 
 
 class RecordList(tk.Frame):
