@@ -69,8 +69,6 @@ class DataRecordForm(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.callbacks = callbacks
 
-        self.current_record = None
-
         # a dictionary to keep track of input widgets
         self.inputs = {}
 
@@ -137,9 +135,6 @@ class DataRecordForm(tk.Frame):
 
     def reset(self):
         '''Resets the form entries'''
-
-        # clear the current record id
-        self.current_record = None
 
         # clear all values
         for widget in self.inputs.values():
