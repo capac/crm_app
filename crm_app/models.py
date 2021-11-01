@@ -46,8 +46,8 @@ class SQLModel:
     fields = {
         # these values are populated by the lookup tables:
         # landlords, properties and tenants
-        'Property ID': {'req': True, 'type': FT.string_list, 'values': []},
-        'Landlord ID': {'req': True, 'type': FT.string_list, 'values': []},
+        'Property ID': {'req': True, 'type': FT.string},
+        'Landlord ID': {'req': True, 'type': FT.string},
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
@@ -62,7 +62,8 @@ class SQLModel:
 
     # insert tenant in existing property
     tenants_insert_query = ('INSERT INTO tenants VALUES (%(Property ID)s, '
-                            '%(First name)s, %(Last name)s, %(Email)s)')
+                            '%(First name)s, %(Last name)s, %(Email)s) ')
+
     # update tenant in existing property
     tenants_update_query = ('UPDATE tenants SET first_name=%(First name)s, '
                             'last_name=%(Last name)s, email=%(Email)s WHERE '
@@ -78,10 +79,10 @@ class SQLModel:
     def __init__(self, host, database, user, password):
         self.connection = pg.connect(host=host, database=database, user=user,
                                      password=password, cursor_factory=DictCursor)
-        landlords = self.query("SELECT id FROM landlords ORDER BY id")
-        self.fields['Landlord ID']['values'] = [x['id'] for x in landlords]
-        prop_ids = self.query("SELECT id FROM properties ORDER BY id")
-        self.fields['Property ID']['values'] = [x['id'] for x in prop_ids]
+        # landlords = self.query("SELECT id FROM landlords ORDER BY id")
+        # self.fields['Landlord ID']['values'] = [x['id'] for x in landlords]
+        # prop_ids = self.query("SELECT id FROM properties ORDER BY id")
+        # self.fields['Property ID']['values'] = [x['id'] for x in prop_ids]
 
     def query(self, query, parameters=None):
         cursor = self.connection.cursor()
@@ -96,12 +97,12 @@ class SQLModel:
                 return cursor.fetchall()
 
     def get_all_records(self):
-        query = ('SELECT * FROM data_record_view '
+        query = ('SELECT * FROM prop_tenant_view '
                  'ORDER BY "Property ID"')
         return self.query(query)
 
     def get_record(self, prop_id):
-        query = ('SELECT * FROM data_record_view '
+        query = ('SELECT * FROM prop_tenant_view '
                  'WHERE "Property ID" = %(prop_id)s')
         result = self.query(query, {"prop_id": prop_id})
         return result[0] if result else {}
@@ -109,37 +110,28 @@ class SQLModel:
     def change_tenant(self, record):
         # add or update tenant information
         prop_id = record['Property ID']
-        # if the property already contains a tenant, update
-        # the property with the new tenant information
-        if self.get_record(prop_id):
-            tenant_query = self.tenants_update_query
-            self.last_write = 'update'
+        query = ('SELECT "First name", "Last name" FROM prop_tenant_view '
+                 'WHERE "Property ID" = %(prop_id)s')
+        results = self.query(query, {"prop_id": prop_id})
+        first_name, last_name = results[0][0], results[0][1]
         # if the property exists but doesn't have any tenant
         # information, associate the tenant data to the property
-        else:
+        if (first_name is None and last_name is None):
             tenant_query = self.tenants_insert_query
             self.last_write = 'insert'
+        # if the property already contains a tenant, update
+        # the property with the new tenant information
+        else:
+            tenant_query = self.tenants_update_query
+            self.last_write = 'update'
 
         self.query(tenant_query, record)
 
     def add_property(self, record):
         # add property information
-        prop_id = record['Property ID']
-        ll_id = record['Landlord ID']
-        flat_num = record['Flat number']
-        street = record['Street']
-        post_code = record['Post code']
-        city = record['City']
-
-        print(f'prop_id: {prop_id}')
         property_query = self.propriety_insert_query
         self.last_write = 'insert'
-
-        result = self.query(property_query, {'prop_id': prop_id, 'll_id': ll_id,
-                                             'flat_num': flat_num, 'street': street,
-                                             'post_code': post_code, 'city': city})
-        print(f'result: {result}')
-        return result[0] if result else {}
+        self.query(property_query, record)
 
     def delete_propriety(self, record):
         # delete property information
@@ -148,10 +140,7 @@ class SQLModel:
         # if record exists, remove old property record
         property_query = self.propriety_delete_query
         self.last_write = 'delete'
-
-        result = self.query(property_query, {'prop_id': prop_id})
-        print(f'result: {result}')
-        return result[0] if result else {}
+        self.query(property_query, record)
 
 
 class SettingsModel:
