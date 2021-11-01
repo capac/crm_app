@@ -53,8 +53,8 @@ class Application(tk.Tk):
         # create data model
         self.callbacks = {
             # menu bar callbacks
-            'file->add_property': self.open_property_window,
-            'file->delete_property': self.delete_property,
+            'file->add_property': self.open_add_property_window,
+            'file->delete_property': self.open_delete_property_window,
             'file->import': self.on_file_import,
             'file->export': self.on_file_export,
             'file->quit': self.quit,
@@ -158,8 +158,8 @@ class Application(tk.Tk):
             if self.data_model.last_write == 'insert tenant':
                 self.recordform.reset()
 
-    def open_property_window(self):
-        '''Adds new property into database'''
+    def open_add_property_window(self):
+        '''Opens window for addition of new property into database'''
 
         # opens window for new property entry
         window = tk.Toplevel(self)
@@ -213,6 +213,11 @@ class Application(tk.Tk):
             self.populate_recordlist()
             # reset form only when appending records
             self.propertyform.reset()
+
+    def open_delete_property_window():
+        '''Opens window for removal of property from database'''
+
+        pass
 
     def delete_property(self):
         '''Removes property from database'''
