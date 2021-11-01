@@ -22,12 +22,13 @@ CREATE TABLE IF NOT EXISTS tenants (
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     email VARCHAR(60),
-    PRIMARY KEY(tn_id)
+    PRIMARY KEY(email)
     );
 
 CREATE TABLE IF NOT EXISTS documents (
     doc_id SERIAL UNIQUE NOT NULL,
     prop_id VARCHAR(10) NOT NULL REFERENCES properties(prop_id),
+    email VARCHAR(10) NOT NULL REFERENCES tenants(email),
     doc_title VARCHAR(200),
     PRIMARY KEY(doc_id)
     );
