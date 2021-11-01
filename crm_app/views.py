@@ -330,8 +330,9 @@ class RecordList(tk.Frame):
                                  width=width, stretch=stretch)
 
         # configure row tags
-        self.treeview.tag_configure('inserted', background='lightgreen')
-        self.treeview.tag_configure('updated', background='lightblue')
+        self.treeview.tag_configure('inserted_tenant', background='lightgreen')
+        self.treeview.tag_configure('inserted_property', background='lightsalmon')
+        self.treeview.tag_configure('updated_tenant', background='lightblue')
 
         # bind selection
         self.treeview.bind('<<TreeviewSelect>>', self.on_open_record)
@@ -361,9 +362,11 @@ class RecordList(tk.Frame):
             rowkey = rowkey_pr + rowkey_tn
             values = [rowdata[key] for key in valuekeys]
             if self.inserted and rowkey_tn in self.inserted:
-                tag = 'inserted'
+                tag = 'inserted_tenant'
             elif self.updated and rowkey_tn in self.updated:
-                tag = 'updated'
+                tag = 'updated_tenant'
+            elif self.inserted and rowkey_pr in self.inserted:
+                tag = 'inserted_property'
             else:
                 tag = ''
             stringkey = '{}|{}|{}|{}|{}|{}|{}|{}|{}'.format(*rowkey)
