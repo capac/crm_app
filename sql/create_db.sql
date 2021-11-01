@@ -57,5 +57,5 @@ CREATE VIEW doc_tenant_view AS (
            dc.doc_title AS "Document title"
     FROM documents AS dc
         JOIN tenants AS tn
-        ON dc.tn_id = tn.tn_id
+        ON dc.email = tn.email
         );
