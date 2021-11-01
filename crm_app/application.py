@@ -134,7 +134,6 @@ class Application(tk.Tk):
 
         # get data
         data = self.recordform.get()
-        print(f'data: {data}')
         try:
             self.data_model.change_tenant(data)
         except Exception as e:
@@ -148,16 +147,15 @@ class Application(tk.Tk):
             self.records_saved += 1
             self.status.set(f'{self.records_saved} record(s) saved this session')
             key = (data['Property ID'], data['First name'], data['Last name'], data['Email'])
-            if self.data_model.last_write == 'update':
+            if self.data_model.last_write == 'update tenant':
                 self.updated_rows.append(key)
-                print(f'self.updated_rows: {self.updated_rows}')
             else:
                 # new property with tenant added
                 self.inserted_rows.append(key)
-                print(f'self.inserted_rows: {self.inserted_rows}')
+                # print(f'self.inserted_rows: {self.inserted_rows}')
             self.populate_recordlist()
             # reset form only when appending records
-            if self.data_model.last_write == 'insert':
+            if self.data_model.last_write == 'insert tenant':
                 self.recordform.reset()
 
     def add_property(self):
