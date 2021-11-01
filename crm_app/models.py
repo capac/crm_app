@@ -115,15 +115,15 @@ class SQLModel:
         results = self.query(query, {"prop_id": prop_id})
         first_name, last_name = results[0][0], results[0][1]
         # if the property exists but doesn't have any tenant
-        # information, associate the tenant data to the property
+        # information, add tenant data to the property
         if (first_name is None and last_name is None):
             tenant_query = self.tenants_insert_query
-            self.last_write = 'insert'
+            self.last_write = 'insert tenant'
         # if the property already contains a tenant, update
         # the property with the new tenant information
         else:
             tenant_query = self.tenants_update_query
-            self.last_write = 'update'
+            self.last_write = 'update tenant'
 
         self.query(tenant_query, record)
 
