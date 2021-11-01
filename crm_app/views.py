@@ -353,16 +353,16 @@ class RecordList(tk.Frame):
 
         valuekeys = list(self.column_defs.keys())[1:]
         for rowdata in rows:
-            rowkey = (str(rowdata['Property ID']), str(rowdata['Landlord ID']),
-                      str(rowdata['Flat number']), str(rowdata['Street']),
-                      str(rowdata['Post code']), str(rowdata['City']),
-                      str(rowdata['First name']), str(rowdata['Last name']),
-                      str(rowdata['Email']))
-            # print(f'rowkey: {rowkey}')
+            rowkey_pr = (str(rowdata['Property ID']), str(rowdata['Landlord ID']),
+                         str(rowdata['Flat number']), str(rowdata['Street']),
+                         str(rowdata['Post code']), str(rowdata['City']))
+            rowkey_tn = (str(rowdata['Property ID']), str(rowdata['First name']),
+                         str(rowdata['Last name']), str(rowdata['Email']))
+            rowkey = rowkey_pr + rowkey_tn
             values = [rowdata[key] for key in valuekeys]
-            if self.inserted and rowkey in self.inserted:
+            if self.inserted and rowkey_tn in self.inserted:
                 tag = 'inserted'
-            elif self.updated and rowkey in self.updated:
+            elif self.updated and rowkey_tn in self.updated:
                 tag = 'updated'
             else:
                 tag = ''
