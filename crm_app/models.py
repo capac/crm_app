@@ -130,7 +130,7 @@ class SQLModel:
     def add_property(self, record):
         # add property information
         property_query = self.propriety_insert_query
-        self.last_write = 'insert'
+        self.last_write = 'insert property'
         self.query(property_query, record)
 
     def delete_propriety(self, record):
