@@ -73,6 +73,7 @@ class SQLModel:
     propriety_insert_query = ('INSERT INTO properties VALUES (%(Property ID)s, '
                               '%(Landlord ID)s, %(Flat number)s, %(Street)s, '
                               '%(Post code)s, %(City)s)')
+
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
 
@@ -135,11 +136,8 @@ class SQLModel:
 
     def delete_propriety(self, record):
         # delete property information
-        prop_id = record['Property ID']
-        print(f'prop_id: {prop_id}')
-        # if record exists, remove old property record
         property_query = self.propriety_delete_query
-        self.last_write = 'delete'
+        self.last_write = 'delete property'
         self.query(property_query, record)
 
 
