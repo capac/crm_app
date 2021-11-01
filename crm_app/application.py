@@ -53,7 +53,7 @@ class Application(tk.Tk):
         # create data model
         self.callbacks = {
             # menu bar callbacks
-            'file->add_property': self.add_property,
+            'file->add_property': self.open_property_window,
             'file->delete_property': self.delete_property,
             'file->import': self.on_file_import,
             'file->export': self.on_file_export,
@@ -158,7 +158,7 @@ class Application(tk.Tk):
             if self.data_model.last_write == 'insert tenant':
                 self.recordform.reset()
 
-    def add_property(self):
+    def open_property_window(self):
         '''Adds new property into database'''
 
         # opens window for new property entry
@@ -208,17 +208,11 @@ class Application(tk.Tk):
             self.status.set(f'{self.records_saved} record(s) saved this session')
             key = (data['Property ID'], data['Landlord ID'], data['Flat number'],
                    data['Street'], data['Post code'], data['City'])
-            if self.data_model.last_write == 'update':
-                self.updated_rows.append(key)
-                print(f'self.updated_rows: {self.updated_rows}')
-            else:
-                # new property with tenant added
+            if self.data_model.last_write == 'insert property':
                 self.inserted_rows.append(key)
-                print(f'self.inserted_rows: {self.inserted_rows}')
             self.populate_recordlist()
             # reset form only when appending records
-            if self.data_model.last_write == 'insert':
-                self.recordform.reset()
+            self.propertyform.reset()
 
     def delete_property(self):
         '''Removes property from database'''
