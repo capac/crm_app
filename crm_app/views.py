@@ -358,7 +358,7 @@ class RecordList(tk.Frame):
         # configure row tags
         self.treeview.tag_configure('inserted_tenant', background='lightgreen')
         self.treeview.tag_configure('inserted_property', background='lightsalmon')
-        self.treeview.tag_configure('updated_tenant', background='lightblue')
+        self.treeview.tag_configure('updated_tenant', background='deepskyblue')
 
         # bind selection
         self.treeview.bind('<<TreeviewSelect>>', self.on_open_record)
