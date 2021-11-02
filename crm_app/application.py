@@ -27,6 +27,7 @@ class Application(tk.Tk):
 
         self.inserted_rows = []
         self.updated_rows = []
+        self.deleted_rows = []
 
         # filename variable
         datestring = datetime.today().strftime('%Y-%m-%d')
@@ -61,6 +62,7 @@ class Application(tk.Tk):
             # method callbacks
             'on_save': self.on_save,
             'on_save_property': self.save_property,
+            'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
         }
 
@@ -167,7 +169,7 @@ class Application(tk.Tk):
         window.title('Add property')
 
         # property form
-        self.propertyform = v.ChangePropertyForm(window, self.data_model.fields, self.callbacks)
+        self.propertyform = v.AddPropertyForm(window, self.data_model.fields, self.callbacks)
         self.propertyform.grid(row=0, padx=5, sticky='W')
         self.propertyform.columnconfigure(0, weight=1)
 
@@ -193,7 +195,6 @@ class Application(tk.Tk):
 
         # get data
         data = self.propertyform.get()
-        print(data)
         try:
             self.data_model.add_property(data)
         except Exception as e:
@@ -210,19 +211,62 @@ class Application(tk.Tk):
                    data['Street'], data['Post code'], data['City'])
             if self.data_model.last_write == 'insert property':
                 self.inserted_rows.append(key)
-            self.populate_recordlist()
             # reset form only when appending records
             self.propertyform.reset()
+            self.populate_recordlist()
 
-    def open_delete_property_window():
+    def open_delete_property_window(self):
         '''Opens window for removal of property from database'''
 
-        pass
+        # opens window for new property entry
+        self.window = tk.Toplevel(self)
+        self.window.resizable(width=False, height=False)
+        self.window.title('Delete property')
+
+        # get property data
+        try:
+            rows = self.data_model.get_all_records()
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem reading database',
+                detail=str(e)
+            )
+        else:
+            updated_prop_ids = [row[0] for row in rows]
+
+        # property form
+        self.deletepropertyform = v.DeletePropertyForm(self.window, self.data_model.fields,
+                                                       self.callbacks, updated_prop_ids)
+        self.deletepropertyform.grid(row=0, padx=5, sticky='W')
+        self.deletepropertyform.columnconfigure(0, weight=1)
+
+        # status bar
+        self.status = tk.StringVar()
+        self.statusbar = ttk.Label(self.window, textvariable=self.status)
+        self.statusbar.grid(row=1, padx=10, sticky=('WE'))
+        self.statusbar.columnconfigure(0, weight=1)
 
     def delete_property(self):
         '''Removes property from database'''
 
-        pass
+        # get data
+        data = self.deletepropertyform.get()
+        # print(data)
+        try:
+            self.data_model.delete_property(data)
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem deleting record',
+                detail=str(e)
+            )
+            self.status.set('Problem deleting record')
+        else:
+            self.records_saved += 1
+            self.status.set(f'{self.records_saved} record(s) deleted this session')
+            self.populate_recordlist()
+            self.window.destroy()
 
     # import records from CSV file to database
     def on_file_import(self):
