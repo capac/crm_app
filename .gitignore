@@ -5,3 +5,4 @@ __pycache__/
 cfi_codes.py
 *.code-workspace
 update_db.sql
+*.csv
