@@ -177,8 +177,8 @@ class DataRecordForm(tk.Frame):
                 pass
 
 
-class ChangePropertyForm(tk.Frame):
-    '''Widget input form for changing property'''
+class AddPropertyForm(tk.Frame):
+    '''Widget input form for adding property'''
 
     def __init__(self, parent, fields, callbacks, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -240,9 +240,6 @@ class ChangePropertyForm(tk.Frame):
     def reset(self):
         '''Resets the form entries'''
 
-        # clear the current record id
-        self.current_record = None
-
         # clear all values
         for widget in self.inputs.values():
             widget.set('')
@@ -265,6 +262,40 @@ class ChangePropertyForm(tk.Frame):
             if widget.error.get():
                 errors[key] = widget.error.get()
         return errors
+
+
+class DeletePropertyForm(tk.Frame):
+    '''Widget input form for deleting property'''
+
+    def __init__(self, parent, fields, callbacks, updated_prop_ids, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.callbacks = callbacks
+
+        # a dictionary to keep track of input widgets
+        self.inputs = {}
+
+        # property information
+        propertyinfo = tk.LabelFrame(self, text='Property information', padx=5, pady=5)
+
+        # line 1
+        self.inputs['Property ID'] = w.LabelInput(propertyinfo, 'Property ID',
+                                                  field_spec=fields['Property ID Dropdown'],
+                                                  input_args={'values': updated_prop_ids})
+        self.inputs['Property ID'].grid(row=0, column=0)
+        self.savebutton = w.LabelInput(propertyinfo, 'Delete property',
+                                       input_class=ttk.Button,
+                                       input_var=self.callbacks['on_delete_property'])
+        self.savebutton.grid(row=0, column=1, padx=10, pady=(16, 0))
+        propertyinfo.grid(row=0, column=0, sticky=tk.W)
+        propertyinfo.columnconfigure(0, weight=1)
+
+    def get(self):
+        '''Retrieve data from Tkinter and place it in regular Python objects'''
+
+        data = {}
+        for key, widget in self.inputs.items():
+            data[key] = widget.get()
+        return data
 
 
 class RecordList(tk.Frame):
