@@ -2,6 +2,7 @@ import platform
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
+from tempfile import mkdtemp
 from . import views as v
 from . import models as m
 
@@ -284,13 +285,25 @@ class Application(tk.Tk):
     def on_file_export(self):
         '''Handles the file->export action from the menu'''
 
-        filename = filedialog.asksaveasfile(
-            title='Create the target file for saving records',
+        filename = filedialog.asksaveasfilename(
+            title='Select the target file for saving records',
             defaultextension='.csv',
             filetypes=[('Comma-Separated Values', '*.csv *.CSV')]
         )
         if filename:
             self.filename.set(filename)
+            try:
+                rows = self.data_model.get_all_records()
+            except Exception as e:
+                messagebox.showerror(
+                    title='Error',
+                    message='Problem reading database',
+                    detail=str(e)
+                )
+            else:
+                self.csv_model = m.CSVModel(filename=self.filename.get(),
+                                            filepath=mkdtemp())
+                self.csv_model.save_record(rows)
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
