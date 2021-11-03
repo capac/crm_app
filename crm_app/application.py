@@ -28,7 +28,6 @@ class Application(tk.Tk):
 
         self.inserted_rows = []
         self.updated_rows = []
-        self.deleted_rows = []
 
         # filename variable
         datestring = datetime.today().strftime('%Y-%m-%d')
@@ -62,7 +61,7 @@ class Application(tk.Tk):
             'file->quit': self.quit,
             # method callbacks
             'on_save': self.on_save,
-            'on_save_property': self.save_property,
+            'on_add_property': self.add_property,
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
         }
@@ -180,7 +179,7 @@ class Application(tk.Tk):
         self.statusbar.grid(row=1, padx=10, sticky=('WE'))
         self.statusbar.columnconfigure(0, weight=1)
 
-    def save_property(self):
+    def add_property(self):
         '''Save new property to the database'''
 
         # check for errors first
