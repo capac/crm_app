@@ -125,7 +125,7 @@ class DataRecordForm(tk.Frame):
         command_section = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
         self.updatebutton = w.LabelInput(command_section, 'Update tenant',
                                          input_class=ttk.Button,
-                                         input_var=self.callbacks['on_save'])
+                                         input_var=self.callbacks['on_update'])
         self.updatebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
         command_section.grid(row=4, column=0, sticky=tk.W)
         command_section.columnconfigure(0, weight=1)
