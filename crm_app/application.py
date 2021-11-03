@@ -60,7 +60,7 @@ class Application(tk.Tk):
             'file->export': self.on_file_export,
             'file->quit': self.quit,
             # method callbacks
-            'on_save': self.on_save,
+            'on_update': self.on_update,
             'on_add_property': self.add_property,
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
@@ -120,8 +120,8 @@ class Application(tk.Tk):
         self.recordform.load_record(rowkey, record)
         self.recordform.tkraise()
 
-    def on_save(self):
-        '''Handles saves to the database button clicks'''
+    def on_update(self):
+        '''Handles tenent updates to database'''
 
         # check for errors first
         errors = self.recordform.get_errors()
