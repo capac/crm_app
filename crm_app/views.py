@@ -219,9 +219,9 @@ class AddPropertyForm(tk.Frame):
 
         # command section
         command_section = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
-        self.savebutton = w.LabelInput(command_section, 'Save property',
+        self.savebutton = w.LabelInput(command_section, 'Add property',
                                        input_class=ttk.Button,
-                                       input_var=self.callbacks['on_save_property'])
+                                       input_var=self.callbacks['on_add_property'])
         self.savebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
         command_section.grid(row=5, column=0, sticky=tk.W)
         command_section.columnconfigure(0, weight=1)
