@@ -318,8 +318,9 @@ class DocumentList(tk.Frame):
     default_minwidth = 20
     default_anchor = tk.W
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, callbacks, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+        self.callbacks = callbacks
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
@@ -329,6 +330,15 @@ class DocumentList(tk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.treeview.grid(row=0, column=0, sticky='NSEW')
+
+        # add print button
+        commandinfo = tk.LabelFrame(self, text='Command', padx=5, pady=5)
+        self.printbutton = w.LabelInput(commandinfo, 'Print list',
+                                        input_class=ttk.Button,
+                                        input_var=self.callbacks['on_print_list'])
+        self.printbutton.grid(row=1, column=1, padx=10, pady=(10, 0))
+        commandinfo.grid(row=1, column=0, sticky=tk.W)
+        commandinfo.columnconfigure(0, weight=1)
 
         # hide first column
         self.treeview.config(show='headings')
