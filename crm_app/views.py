@@ -131,8 +131,7 @@ class DataRecordForm(tk.Frame):
                                             input_class=ttk.Button,
                                             input_var=self.callbacks['on_show_documents'])
         self.documentsbutton.grid(row=0, column=1, padx=10, pady=(10, 0))
-        command_section.grid(row=4, column=0, sticky=tk.W)
-        command_section.columnconfigure(0, weight=1)
+        command_section.grid(row=4, column=0, sticky=(tk.W + tk.E))
 
         # set default tk entry values to empty strings
         self.reset()
@@ -227,8 +226,7 @@ class AddPropertyForm(tk.Frame):
                                        input_class=ttk.Button,
                                        input_var=self.callbacks['on_add_property'])
         self.savebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
-        command_section.grid(row=5, column=0, sticky=tk.W)
-        command_section.columnconfigure(0, weight=1)
+        command_section.grid(row=5, column=0, sticky=(tk.W + tk.E))
 
         # set default tk entry values to empty strings
         self.reset()
@@ -331,15 +329,6 @@ class DocumentList(tk.Frame):
         self.rowconfigure(0, weight=1)
         self.treeview.grid(row=0, column=0, sticky='NSEW')
 
-        # add print button
-        commandinfo = tk.LabelFrame(self, text='Command', padx=5, pady=5)
-        self.printbutton = w.LabelInput(commandinfo, 'Print list',
-                                        input_class=ttk.Button,
-                                        input_var=self.callbacks['on_print_list'])
-        self.printbutton.grid(row=1, column=1, padx=10, pady=(10, 0))
-        commandinfo.grid(row=1, column=0, sticky=tk.W)
-        commandinfo.columnconfigure(0, weight=1)
-
         # hide first column
         self.treeview.config(show='headings')
 
@@ -349,6 +338,15 @@ class DocumentList(tk.Frame):
         self.treeview.configure(yscrollcommand=self.scrollbar.set)
         self.treeview.grid(row=0, column=0, sticky='NSEW')
         self.scrollbar.grid(row=0, column=1, sticky='NSEW')
+
+        # add print button
+        commandinfo = tk.LabelFrame(self, text='Command', padx=5, pady=5)
+        self.printbutton = w.LabelInput(commandinfo, 'Print list',
+                                        input_class=ttk.Button,
+                                        input_var=self.callbacks['on_print_list'])
+        self.printbutton.grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 0))
+        commandinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
+        commandinfo.columnconfigure(0, weight=1)
 
         # configure treeview columns
         for name, definition in self.column_defs.items():
