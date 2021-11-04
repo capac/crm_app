@@ -298,13 +298,13 @@ class Application(tk.Tk):
 
         # document form
         self.documentform = v.DocumentList(self.window, self.callbacks)
-        self.documentform.grid(row=0, padx=5, sticky='W')
+        self.documentform.grid(row=0, padx=5, sticky='NSEW')
         self.documentform.columnconfigure(0, weight=1)
 
         # status bar
         self.status = tk.StringVar()
         self.statusbar = ttk.Label(self.window, textvariable=self.status)
-        self.statusbar.grid(row=1, padx=10, sticky=('WE'))
+        self.statusbar.grid(row=1, padx=10, sticky=(tk.W + tk.E))
         self.statusbar.columnconfigure(0, weight=1)
 
         # populate the treeview with documents
