@@ -127,6 +127,10 @@ class DataRecordForm(tk.Frame):
                                          input_class=ttk.Button,
                                          input_var=self.callbacks['on_update'])
         self.updatebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
+        self.documentsbutton = w.LabelInput(command_section, 'Show documents',
+                                            input_class=ttk.Button,
+                                            input_var=self.callbacks['on_show_documents'])
+        self.documentsbutton.grid(row=0, column=1, padx=10, pady=(10, 0))
         command_section.grid(row=4, column=0, sticky=tk.W)
         command_section.columnconfigure(0, weight=1)
 
@@ -296,6 +300,70 @@ class DeletePropertyForm(tk.Frame):
         for key, widget in self.inputs.items():
             data[key] = widget.get()
         return data
+
+
+class DocumentList(tk.Frame):
+    '''Display documents sent to tenants'''
+
+    column_defs = {
+        '#0': {'label': 'Row', 'anchor': tk.W},
+        'doc_id': {'label': 'Doc ID', 'width': 60},
+        'prop_id': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 80},
+        'email': {'label': 'Email', 'width': 220},
+        'doc_title': {'label': 'Document title', 'width': 420},
+    }
+    default_width = 100
+    default_minwidth = 20
+    default_anchor = tk.W
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        # create treeview
+        self.treeview = ttk.Treeview(self, columns=list(self.column_defs.keys())[1:],
+                                     selectmode='browse')
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.treeview.grid(row=0, column=0, sticky='NSEW')
+
+        # hide first column
+        self.treeview.config(show='headings')
+
+        # configure scrollbar for the treeview
+        self.scrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL,
+                                       command=self.treeview.yview)
+        self.treeview.configure(yscrollcommand=self.scrollbar.set)
+        self.treeview.grid(row=0, column=0, sticky='NSEW')
+        self.scrollbar.grid(row=0, column=1, sticky='NSEW')
+
+        # configure treeview columns
+        for name, definition in self.column_defs.items():
+            label = definition.get('label', '')
+            anchor = definition.get('anchor', self.default_anchor)
+            minwidth = definition.get('minwidth', self.default_minwidth)
+            width = definition.get('width', self.default_width)
+            stretch = definition.get('stretch', False)
+            self.treeview.heading(name, text=label, anchor=anchor)
+            self.treeview.column(name, anchor=anchor, minwidth=minwidth,
+                                 width=width, stretch=stretch)
+
+    def populate(self, rows):
+        '''Clear the treeview and write the supplied data rows to it'''
+
+        for row in self.treeview.get_children():
+            self.treeview.delete(row)
+
+        valuekeys = list(self.column_defs.keys())[1:]
+        # print(f'rows: {rows}')
+        for rowdata in rows:
+            rowkey = (str(rowdata['doc_id']), str(rowdata['prop_id']),
+                      str(rowdata['email']), str(rowdata['doc_title']))
+            values = [rowdata[key] for key in valuekeys]
+            stringkey = '{}|{}|{}|{}'.format(*rowkey)
+            self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
+                                 values=values)
 
 
 class RecordList(tk.Frame):
