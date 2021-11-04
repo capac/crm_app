@@ -106,6 +106,12 @@ class SQLModel:
         property_query = self.propriety_delete_query
         self.query(property_query, record)
 
+    def get_documents_by_email(self, email):
+        # get list of documents by email
+        query = ('SELECT * FROM documents WHERE "email" = %(email)s')
+        results = self.query(query, {"email": email})
+        return results if results else {}
+
 
 class CSVModel:
     '''CSV file storage'''
