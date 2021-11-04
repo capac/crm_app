@@ -64,6 +64,7 @@ class Application(tk.Tk):
             'on_add_property': self.add_property,
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
+            'on_show_documents': self.show_documents,
         }
 
         menu = v.MainMenu(self, self.callbacks)
@@ -225,7 +226,7 @@ class Application(tk.Tk):
 
         # get property data
         try:
-            rows = self.data_model.get_all_records()
+            records = self.data_model.get_all_records()
         except Exception as e:
             messagebox.showerror(
                 title='Error',
@@ -233,11 +234,11 @@ class Application(tk.Tk):
                 detail=str(e)
             )
         else:
-            updated_prop_ids = [row[0] for row in rows]
+            updated_property_ids = [record[0] for record in records]
 
         # property form
         self.deletepropertyform = v.DeletePropertyForm(self.window, self.data_model.fields,
-                                                       self.callbacks, updated_prop_ids)
+                                                       self.callbacks, updated_property_ids)
         self.deletepropertyform.grid(row=0, padx=5, sticky='W')
         self.deletepropertyform.columnconfigure(0, weight=1)
 
@@ -267,6 +268,47 @@ class Application(tk.Tk):
             self.status.set(f'{self.records_saved} record(s) deleted this session')
             self.populate_recordlist()
             self.window.destroy()
+
+    def populate_documentlist(self):
+        '''Opens list of documents sent by email'''
+
+        email = self.recordform.inputs['Email'].get()
+        # print(f'record: {email}')
+        try:
+            rows = self.data_model.get_documents_by_email(email)
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem loading document(s)',
+                detail=str(e)
+            )
+            self.status.set('Problem loading document(s)')
+        else:
+            self.documents_loaded = len(rows)
+            self.status.set(f'{self.documents_loaded} document(s) listed this session')
+            self.documentform.populate(rows)
+
+    def show_documents(self):
+        '''Opens window showing list of documents to tenants'''
+
+        # opens window for new property entry
+        self.window = tk.Toplevel(self)
+        self.window.resizable(width=False, height=False)
+        self.window.title('Document list')
+
+        # document form
+        self.documentform = v.DocumentList(self.window)
+        self.documentform.grid(row=0, padx=5, sticky='W')
+        self.documentform.columnconfigure(0, weight=1)
+
+        # status bar
+        self.status = tk.StringVar()
+        self.statusbar = ttk.Label(self.window, textvariable=self.status)
+        self.statusbar.grid(row=1, padx=10, sticky=('WE'))
+        self.statusbar.columnconfigure(0, weight=1)
+
+        # populate the treeview with documents
+        self.populate_documentlist()
 
     # import records from CSV file to database
     def on_file_import(self):
