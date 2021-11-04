@@ -65,6 +65,7 @@ class Application(tk.Tk):
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
             'on_show_documents': self.show_documents,
+            'on_print_list': self.print_list,
         }
 
         menu = v.MainMenu(self, self.callbacks)
@@ -273,7 +274,6 @@ class Application(tk.Tk):
         '''Opens list of documents sent by email'''
 
         email = self.recordform.inputs['Email'].get()
-        # print(f'record: {email}')
         try:
             rows = self.data_model.get_documents_by_email(email)
         except Exception as e:
@@ -297,7 +297,7 @@ class Application(tk.Tk):
         self.window.title('Document list')
 
         # document form
-        self.documentform = v.DocumentList(self.window)
+        self.documentform = v.DocumentList(self.window, self.callbacks)
         self.documentform.grid(row=0, padx=5, sticky='W')
         self.documentform.columnconfigure(0, weight=1)
 
@@ -309,6 +309,11 @@ class Application(tk.Tk):
 
         # populate the treeview with documents
         self.populate_documentlist()
+
+    def print_list(self):
+        '''Print list of documents sent by email'''
+
+        pass
 
     # import records from CSV file to database
     def on_file_import(self):
