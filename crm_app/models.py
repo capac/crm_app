@@ -108,7 +108,7 @@ class SQLModel:
 
     def get_documents_by_email(self, email):
         # get list of documents by email
-        query = ('SELECT * FROM documents WHERE "email" = %(email)s')
+        query = ('SELECT * FROM doc_tenant_view WHERE "Email" = %(email)s')
         results = self.query(query, {"email": email})
         return results if results else {}
 

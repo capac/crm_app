@@ -307,10 +307,12 @@ class DocumentList(tk.Frame):
 
     column_defs = {
         '#0': {'label': 'Row', 'anchor': tk.W},
-        'doc_id': {'label': 'Doc ID', 'width': 60},
-        'prop_id': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 80},
-        'email': {'label': 'Email', 'width': 220},
-        'doc_title': {'label': 'Document title', 'width': 420},
+        'Document ID': {'label': 'Document ID', 'width': 60},
+        'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 80},
+        'First name': {'label': 'First name', 'width': 100},
+        'Last name': {'label': 'Last name', 'width': 100},
+        'Email': {'label': 'Email', 'width': 220},
+        'Document title': {'label': 'Document title', 'width': 420},
     }
     default_width = 100
     default_minwidth = 20
@@ -358,10 +360,11 @@ class DocumentList(tk.Frame):
         valuekeys = list(self.column_defs.keys())[1:]
         # print(f'rows: {rows}')
         for rowdata in rows:
-            rowkey = (str(rowdata['doc_id']), str(rowdata['prop_id']),
-                      str(rowdata['email']), str(rowdata['doc_title']))
+            rowkey = (str(rowdata['Document ID']), str(rowdata['Property ID']),
+                      str(rowdata['First name']), str(rowdata['Last name']),
+                      str(rowdata['Email']), str(rowdata['Document title']))
             values = [rowdata[key] for key in valuekeys]
-            stringkey = '{}|{}|{}|{}'.format(*rowkey)
+            stringkey = '{}|{}|{}|{}|{}|{}'.format(*rowkey)
             self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
                                  values=values)
 
