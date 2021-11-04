@@ -16,8 +16,8 @@ The program must:
 * allow the query of tenant information by property identification
 * create a list of documents sent by email to the tenant
 * allow the printing of the list of documents
-* import/export functionality of property information in database
-* new/edit/delete functionality for property entries in database
+* import/export functionality of property / tenant information in database
+* new/edit/delete functionality for property / tenant entries in database
 
 Table entries
 -------------

@@ -15,6 +15,8 @@ Features
 * Allows printing of list of documents sent to tenant
 * Provides a validated entry form to ensure correct data
 * Provides import and export functions for data
+* Provides add / delete property functions
+* Allow update of tenent information in property 
 
 Author
 ======
