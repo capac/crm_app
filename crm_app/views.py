@@ -310,7 +310,7 @@ class DocumentList(tk.Frame):
         'First name': {'label': 'First name', 'width': 100},
         'Last name': {'label': 'Last name', 'width': 100},
         'Email': {'label': 'Email', 'width': 220},
-        'Document title': {'label': 'Document title', 'width': 420},
+        'Document title': {'label': 'Document title', 'width': 400},
     }
     default_width = 100
     default_minwidth = 20
@@ -345,7 +345,7 @@ class DocumentList(tk.Frame):
                                         input_class=ttk.Button,
                                         input_var=self.callbacks['on_print_list'])
         self.printbutton.grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 0))
-        commandinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
+        commandinfo.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
         commandinfo.columnconfigure(0, weight=1)
 
         # configure treeview columns
