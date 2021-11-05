@@ -24,7 +24,7 @@ class Application(tk.Tk):
         self.resizable(width=False, height=False)
 
         # application name
-        ttk.Label(self, text='Data Record List', font=('TkDefaultFont', 16)).grid(row=0, padx=60)
+        ttk.Label(self, text='Tenant Record List', font=('TkDefaultFont', 16)).grid(row=0, padx=60)
 
         self.inserted_rows = []
         self.updated_rows = []
@@ -299,7 +299,6 @@ class Application(tk.Tk):
         # document form
         self.documentform = v.DocumentList(self.window, self.callbacks)
         self.documentform.grid(row=0, padx=5, sticky='NSEW')
-        self.documentform.columnconfigure(0, weight=1)
 
         # status bar
         self.status = tk.StringVar()
