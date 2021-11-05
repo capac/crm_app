@@ -25,9 +25,10 @@ Angelo Varlotta, 2021
 Requirements
 ============
 
-* Python 3
-* Tkinter
-* PostgreSQL
+* Python 3.x
+* Tkinter (part of the built-in packages in Python)
+* PostgreSQL (>=13.4)
+* O365 (https://pypi.org/project/O365), install with `python -m pip install O365`.
 
 Usage
 =====
