@@ -120,7 +120,7 @@ class Application(tk.Tk):
                                      detail=str(e))
                 return
         self.recordform.load_record(rowkey, record)
-        self.recordform.tkraise()
+        self.recordform.tkraise(aboveThis=self.recordlist)
 
     def on_update(self):
         '''Handles tenent updates to database'''
