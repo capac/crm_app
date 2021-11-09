@@ -106,20 +106,18 @@ class Application(tk.Tk):
             self.recordlist.populate(rows)
 
     def open_record(self, rowkey=None):
-        '''Rowkey simply contains prop_id'''
+        '''rowkey is simply prop_id, while data contains the information for the prop_id'''
 
         if rowkey is None:
-            record = None
+            data = None
         else:
             try:
-                # print(f'rowkey: {rowkey}')
-                record = self.data_model.get_record(rowkey)
-                # print(f'record: {record}')
+                data = self.data_model.get_record(rowkey)
+                self.recordform.load_record(rowkey, data)
             except Exception as e:
                 messagebox.showerror(title='Error', message='Problem reading database',
                                      detail=str(e))
                 return
-        self.recordform.load_record(rowkey, record)
         self.recordform.tkraise(aboveThis=self.recordlist)
 
     def on_update(self):
