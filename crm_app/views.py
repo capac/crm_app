@@ -30,6 +30,7 @@ class MainMenu(tk.Menu):
             label='Delete property'+chr(8230),
             command=callbacks['file->delete_property']
             )
+        file_menu.add_separator()
         file_menu.add_command(
             # 8230: ASCII value for horizontal ellipsis
             label='Import file'+chr(8230),
@@ -39,11 +40,6 @@ class MainMenu(tk.Menu):
             # 8230: ASCII value for horizontal ellipsis
             label='Export file'+chr(8230),
             command=callbacks['file->export']
-            )
-        file_menu.add_separator()
-        file_menu.add_command(
-            label='Quit',
-            command=callbacks['file->quit']
             )
         self.add_cascade(label='File', menu=file_menu)
 

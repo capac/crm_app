@@ -58,7 +58,6 @@ class Application(tk.Tk):
             'file->delete_property': self.open_delete_property_window,
             'file->import': self.on_file_import,
             'file->export': self.on_file_export,
-            'file->quit': self.quit,
             # method callbacks
             'on_update': self.on_update,
             'on_add_property': self.add_property,
