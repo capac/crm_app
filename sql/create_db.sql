@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS landlords (
 
 CREATE TABLE IF NOT EXISTS properties (
     prop_id VARCHAR(7) UNIQUE NOT NULL,
-    ll_id VARCHAR(6) NOT NULL REFERENCES landlords(ll_id),
+    ll_id VARCHAR(6) NOT NULL REFERENCES landlords(ll_id) ON UPDATE CASCADE,
     flat_num VARCHAR(3) NOT NULL,
     street VARCHAR(60) NOT NULL,
     post_code VARCHAR(10) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS properties (
     );
 
 CREATE TABLE IF NOT EXISTS tenants (
-    prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id),
+    prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id) ON UPDATE CASCADE,
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     email VARCHAR(60),
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS tenants (
 
 CREATE TABLE IF NOT EXISTS documents (
     doc_id SERIAL UNIQUE NOT NULL,
-    prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id),
+    prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id) ON UPDATE CASCADE,
     email VARCHAR(60) NOT NULL REFERENCES tenants(email) ON UPDATE CASCADE,
     doc_title VARCHAR(200),
     PRIMARY KEY(doc_id)
