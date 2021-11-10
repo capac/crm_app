@@ -113,14 +113,14 @@ class Application(tk.Tk):
             try:
                 data = self.data_model.get_record(rowkey)
                 self.recordform.load_record(rowkey, data)
+                self.recordform.tkraise(aboveThis=self.recordlist)
             except Exception as e:
                 messagebox.showerror(title='Error', message='Problem reading database',
                                      detail=str(e))
                 return
-        self.recordform.tkraise(aboveThis=self.recordlist)
 
     def on_update(self):
-        '''Handles tenent updates to database'''
+        '''Handles tenant updates to database'''
 
         # check for errors first
         errors = self.recordform.get_errors()
