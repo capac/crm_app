@@ -89,7 +89,7 @@ class SQLModel:
             self.last_write = 'insert tenant'
         # if the property already contains a tenant, update
         # the property with the new tenant information
-        else:
+        elif (isinstance(first_name, str) and isinstance(last_name, str)):
             tenant_query = self.tenants_update_query
             self.last_write = 'update tenant'
 
