@@ -153,7 +153,6 @@ class Application(tk.Tk):
             else:
                 # new property with tenant added
                 self.inserted_rows.append(key)
-                # print(f'self.inserted_rows: {self.inserted_rows}')
             self.populate_recordlist()
             # reset form only when appending records
             if self.data_model.last_write == 'insert tenant':
