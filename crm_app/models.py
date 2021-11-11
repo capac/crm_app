@@ -10,15 +10,18 @@ class SQLModel:
     '''SQL database values'''
 
     fields = {
-        # these values are populated by the lookup tables:
-        # landlords, properties and tenants
-        'Property ID': {'req': True, 'type': FT.string},
+        # value for 'DeletePropertyForm' class
         'Property ID Dropdown': {'req': True, 'type': FT.string_list, 'values': []},
+        # these values are populated by the lookup tables:
+        # landlords
         'Landlord ID': {'req': True, 'type': FT.string},
+        'Property ID': {'req': True, 'type': FT.string},
+        # properties
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
         'City': {'req': True, 'type': FT.string},
+        # tenants
         'First name': {'req': True, 'type': FT.string},
         'Last name': {'req': True, 'type': FT.string},
         'Email': {'req': True, 'type': FT.string},
@@ -26,6 +29,65 @@ class SQLModel:
         #  email attachments using the Microsoft Graph API
         # 'Document': {'req': True, 'type': FT.long_string},
     }
+    # create database if not existing
+    create_database_command = ('CREATE DATABASE IF NOT EXISTS housing_management')
+
+    # create tables if not existing
+    create_ll_table_command = ('CREATE TABLE IF NOT EXISTS landlords '
+                               '(ll_id VARCHAR(6) UNIQUE NOT NULL, '
+                               'PRIMARY KEY(ll_id))')
+
+    create_pr_table_command = ('CREATE TABLE IF NOT EXISTS properties '
+                               '(prop_id VARCHAR(7) UNIQUE NOT NULL, '
+                               'll_id VARCHAR(6) NOT NULL REFERENCES '
+                               'landlords(ll_id) ON UPDATE CASCADE, '
+                               'flat_num VARCHAR(3) NOT NULL, '
+                               'street VARCHAR(60) NOT NULL, '
+                               'post_code VARCHAR(10) NOT NULL, '
+                               'city VARCHAR(20) NOT NULL, '
+                               'PRIMARY KEY(prop_id))')
+
+    create_tn_table_command = ('CREATE TABLE IF NOT EXISTS tenants '
+                               '(prop_id VARCHAR(7) NOT NULL REFERENCES '
+                               'properties(prop_id) ON UPDATE CASCADE, '
+                               'first_name VARCHAR(20), '
+                               'last_name VARCHAR(20), '
+                               'email VARCHAR(60), '
+                               'PRIMARY KEY(email))')
+
+    create_dc_table_command = ('CREATE TABLE IF NOT EXISTS documents '
+                               '(doc_id SERIAL UNIQUE NOT NULL, '
+                               'prop_id VARCHAR(7) NOT NULL REFERENCES '
+                               'properties(prop_id) ON UPDATE CASCADE, '
+                               'email VARCHAR(60) NOT NULL REFERENCES '
+                               'tenants(email) ON UPDATE CASCADE, '
+                               'doc_title VARCHAR(200), '
+                               'PRIMARY KEY(doc_id))')
+
+    create_prop_tenant_view_command = ('CREATE VIEW prop_tenant_view AS '
+                                       '(SELECT pr.prop_id AS "Property ID", '
+                                       'pr.ll_id AS "Landlord ID", '
+                                       'pr.flat_num AS "Flat number", '
+                                       'pr.street AS "Street", '
+                                       'pr.post_code AS "Post code", '
+                                       'pr.city AS "City", '
+                                       'tn.first_name AS "First name", '
+                                       'tn.last_name AS "Last name", '
+                                       'tn.email AS "Email" '
+                                       'FROM properties AS pr '
+                                       'LEFT JOIN tenants AS tn '
+                                       'ON pr.prop_id = tn.prop_id)')
+
+    create_doc_tenant_view_command = ('CREATE VIEW doc_tenant_view AS '
+                                      '(SELECT dc.doc_id AS "Document ID", '
+                                      'dc.prop_id AS "Property ID", '
+                                      'tn.first_name AS "First name", '
+                                      'tn.last_name AS "Last name", '
+                                      'tn.email AS "Email", '
+                                      'dc.doc_title AS "Document title" '
+                                      'FROM documents AS dc '
+                                      'JOIN tenants AS tn '
+                                      'ON dc.email = tn.email)')
 
     # insert tenant in existing property
     tenants_insert_query = ('INSERT INTO tenants VALUES (%(Property ID)s, '
@@ -63,6 +125,18 @@ class SQLModel:
             self.connection.commit()
             if cursor.description is not None:
                 return cursor.fetchall()
+
+    # only upon first run of the crm application
+    def create_db_and_tables(self):
+        '''Creates database and tables if they don't already exist'''
+
+        self.query(self.create_database_command)
+        self.query(self.create_ll_table_command)
+        self.query(self.create_pr_table_command)
+        self.query(self.create_tn_table_command)
+        self.query(self.create_dc_table_command)
+        self.query(self.create_prop_tenant_view_command)
+        self.query(self.create_doc_tenant_view_command)
 
     def get_all_records(self):
         query = ('SELECT * FROM prop_tenant_view '
