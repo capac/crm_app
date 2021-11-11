@@ -220,9 +220,9 @@ class Application(tk.Tk):
         '''Opens window for removal of property from database'''
 
         # opens window for new property entry
-        window = tk.Toplevel(self)
-        window.resizable(width=False, height=False)
-        window.title('Delete property')
+        self.window = tk.Toplevel(self)
+        self.window.resizable(width=False, height=False)
+        self.window.title('Delete property')
 
         # get property data
         try:
@@ -237,14 +237,14 @@ class Application(tk.Tk):
             updated_property_ids = [record[0] for record in records]
 
         # property form
-        self.deletepropertyform = v.DeletePropertyForm(window, self.data_model.fields,
+        self.deletepropertyform = v.DeletePropertyForm(self.window, self.data_model.fields,
                                                        self.callbacks, updated_property_ids)
         self.deletepropertyform.grid(row=0, padx=5, sticky='W')
         self.deletepropertyform.columnconfigure(0, weight=1)
 
         # status bar
         self.status = tk.StringVar()
-        self.statusbar = ttk.Label(window, textvariable=self.status)
+        self.statusbar = ttk.Label(self.window, textvariable=self.status)
         self.statusbar.grid(row=1, padx=10, sticky=('WE'))
         self.statusbar.columnconfigure(0, weight=1)
 
