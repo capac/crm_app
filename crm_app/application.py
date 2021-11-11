@@ -70,6 +70,9 @@ class Application(tk.Tk):
         menu = v.MainMenu(self, self.callbacks)
         self.config(menu=menu)
 
+        # create database and tables if non-existent
+        self.data_model.create_db_and_tables()
+
         # treeview record form
         self.recordlist = v.RecordList(self, self.callbacks,
                                        inserted=self.inserted_rows,
