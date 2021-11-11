@@ -29,8 +29,11 @@ class SQLModel:
         #  email attachments using the Microsoft Graph API
         # 'Document': {'req': True, 'type': FT.long_string},
     }
+
     # create database if not existing
-    create_database_command = ('CREATE DATABASE IF NOT EXISTS housing_management')
+    create_database_command = ('''SELECT 'CREATE DATABASE housing_management' WHERE NOT EXISTS '''
+                               '''(SELECT FROM pg_database WHERE datname = '''
+                               ''''housing_management')''')
 
     # create tables if not existing
     create_ll_table_command = ('CREATE TABLE IF NOT EXISTS landlords '
@@ -64,7 +67,7 @@ class SQLModel:
                                'doc_title VARCHAR(200), '
                                'PRIMARY KEY(doc_id))')
 
-    create_prop_tenant_view_command = ('CREATE VIEW prop_tenant_view AS '
+    create_prop_tenant_view_command = ('CREATE OR REPLACE VIEW prop_tenant_view AS '
                                        '(SELECT pr.prop_id AS "Property ID", '
                                        'pr.ll_id AS "Landlord ID", '
                                        'pr.flat_num AS "Flat number", '
@@ -78,7 +81,7 @@ class SQLModel:
                                        'LEFT JOIN tenants AS tn '
                                        'ON pr.prop_id = tn.prop_id)')
 
-    create_doc_tenant_view_command = ('CREATE VIEW doc_tenant_view AS '
+    create_doc_tenant_view_command = ('CREATE OR REPLACE VIEW doc_tenant_view AS '
                                       '(SELECT dc.doc_id AS "Document ID", '
                                       'dc.prop_id AS "Property ID", '
                                       'tn.first_name AS "First name", '
