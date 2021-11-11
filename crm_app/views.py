@@ -493,8 +493,8 @@ class LoginDialog(Dialog):
         ttk.Label(lf, text='Login to database',
                   font='Sans 20').grid(row=0)
 
-        # ttk.Style().configure('Entry.field', background='white',
-        #                       foreground='black')
+        ttk.Style().configure('TEntry', background='white',
+                              foreground='black')
         ttk.Style().configure('err.TLabel', background='darkred',
                               foreground='white')
         if self.error.get():
