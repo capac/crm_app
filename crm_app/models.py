@@ -106,6 +106,10 @@ class SQLModel:
                               '%(Landlord ID)s, %(Flat number)s, %(Street)s, '
                               '%(Post code)s, %(City)s)')
 
+    # insert new landlord, used only on initial CRM app  setup
+    landlords_insert_query = ('INSERT INTO landlords (ll_id) VALUES (%(Landlord ID)s) '
+                              'ON CONFLICT (ll_id) DO NOTHING')
+
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
 
@@ -152,7 +156,7 @@ class SQLModel:
         result = self.query(query, {"prop_id": prop_id})
         return result[0] if result else {}
 
-    def change_tenant(self, record):
+    def add_tenant(self, record):
         # add or update tenant information
         prop_id = record['Property ID']
         query = ('SELECT "First name", "Last name" FROM prop_tenant_view '
@@ -178,6 +182,11 @@ class SQLModel:
         self.last_write = 'insert property'
         self.query(property_query, record)
 
+    def add_landlords(self, record):
+        # add property information
+        landlords_query = self.landlords_insert_query
+        self.query(landlords_query, record)
+
     def delete_property(self, record):
         # delete property information
         property_query = self.propriety_delete_query
@@ -191,7 +200,7 @@ class SQLModel:
 
 
 class CSVModel:
-    '''CSV file storage'''
+    '''CSV file retrieval and storage'''
 
     fields = {
         'Property ID': {'req': True, 'type': FT.string},
@@ -216,6 +225,23 @@ class CSVModel:
             self.filename = os.path.join(filepath, filename)
         else:
             self.filename = filename
+
+    def get_all_records(self):
+        '''Read in all records from the CSV and return a list'''
+
+        if not os.path.exists(self.filename):
+            return []
+
+        with open(self.filename, 'r', encoding='utf-8') as fh:
+            # turning fh into a list is necessary for our unit tests
+            csvreader = csv.DictReader(list(fh.readlines()))
+            missing_fields = set(self.fields.keys()) - set(csvreader.fieldnames)
+            if len(missing_fields) > 0:
+                raise Exception(
+                    f'''File is missing fields: {', '.join(missing_fields)}'''
+                )
+            else:
+                return list(csvreader)
 
     def save_record(self, rows):
         '''Save a dict of data to a CSV file'''
