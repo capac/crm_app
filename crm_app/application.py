@@ -165,18 +165,18 @@ class Application(tk.Tk):
         '''Opens window for addition of new property into database'''
 
         # opens window for new property entry
-        window = tk.Toplevel(self)
-        window.resizable(width=False, height=False)
-        window.title('Add property')
+        self.property_window = tk.Toplevel(self)
+        self.property_window.resizable(width=False, height=False)
+        self.property_window.title('Add property')
 
         # property form
-        self.propertyform = v.AddPropertyForm(window, self.data_model.fields, self.callbacks)
+        self.propertyform = v.AddPropertyForm(self.property_window, self.data_model.fields, self.callbacks)
         self.propertyform.grid(row=0, padx=5, sticky='W')
         self.propertyform.columnconfigure(0, weight=1)
 
         # status bar
         self.status = tk.StringVar()
-        self.statusbar = ttk.Label(window, textvariable=self.status)
+        self.statusbar = ttk.Label(self.property_window, textvariable=self.status)
         self.statusbar.grid(row=1, padx=10, sticky=('WE'))
         self.statusbar.columnconfigure(0, weight=1)
 
@@ -215,14 +215,15 @@ class Application(tk.Tk):
             # reset form only when appending records
             self.propertyform.reset()
             self.populate_recordlist()
+            self.property_window.destroy()
 
     def open_delete_property_window(self):
         '''Opens window for removal of property from database'''
 
         # opens window for new property entry
-        self.window = tk.Toplevel(self)
-        self.window.resizable(width=False, height=False)
-        self.window.title('Delete property')
+        self.delete_window = tk.Toplevel(self)
+        self.delete_window.resizable(width=False, height=False)
+        self.delete_window.title('Delete property')
 
         # get property data
         try:
@@ -237,14 +238,14 @@ class Application(tk.Tk):
             updated_property_ids = [record[0] for record in records]
 
         # property form
-        self.deletepropertyform = v.DeletePropertyForm(self.window, self.data_model.fields,
+        self.deletepropertyform = v.DeletePropertyForm(self.delete_window, self.data_model.fields,
                                                        self.callbacks, updated_property_ids)
         self.deletepropertyform.grid(row=0, padx=5, sticky='W')
         self.deletepropertyform.columnconfigure(0, weight=1)
 
         # status bar
         self.status = tk.StringVar()
-        self.statusbar = ttk.Label(self.window, textvariable=self.status)
+        self.statusbar = ttk.Label(self.delete_window, textvariable=self.status)
         self.statusbar.grid(row=1, padx=10, sticky=('WE'))
         self.statusbar.columnconfigure(0, weight=1)
 
@@ -253,7 +254,6 @@ class Application(tk.Tk):
 
         # get data
         data = self.deletepropertyform.get()
-        # print(data)
         try:
             self.data_model.delete_property(data)
         except Exception as e:
@@ -267,7 +267,7 @@ class Application(tk.Tk):
             self.records_saved += 1
             self.status.set(f'{self.records_saved} record(s) deleted this session')
             self.populate_recordlist()
-            self.window.destroy()
+            self.delete_window.destroy()
 
     def populate_documentlist(self):
         '''Opens list of documents sent by email'''
@@ -291,17 +291,17 @@ class Application(tk.Tk):
         '''Opens window showing list of documents to tenants'''
 
         # opens window for new property entry
-        self.window = tk.Toplevel(self)
-        self.window.resizable(width=False, height=False)
-        self.window.title('Document list')
+        self.docs_window = tk.Toplevel(self)
+        self.docs_window.resizable(width=False, height=False)
+        self.docs_window.title('Document list')
 
         # document form
-        self.documentform = v.DocumentList(self.window, self.callbacks)
+        self.documentform = v.DocumentList(self.docs_window, self.callbacks)
         self.documentform.grid(row=0, padx=5, sticky='NSEW')
 
         # status bar
         self.status = tk.StringVar()
-        self.statusbar = ttk.Label(self.window, textvariable=self.status)
+        self.statusbar = ttk.Label(self.docs_window, textvariable=self.status)
         self.statusbar.grid(row=1, padx=10, sticky=(tk.W + tk.E))
         self.statusbar.columnconfigure(0, weight=1)
 
