@@ -2,7 +2,6 @@ import platform
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
-from tempfile import mkdtemp
 from . import views as v
 from . import models as m
 
@@ -139,7 +138,7 @@ class Application(tk.Tk):
         # get data
         data = self.recordform.get()
         try:
-            self.data_model.change_tenant(data)
+            self.data_model.add_tenant(data)
         except Exception as e:
             messagebox.showerror(
                 title='Error',
@@ -317,13 +316,30 @@ class Application(tk.Tk):
     def on_file_import(self):
         '''Handles the file->import action from the menu'''
 
-        filename = filedialog.askopenfile(
+        filename = filedialog.askopenfilename(
             title='Select the file to import into the database',
             defaultextension='.csv',
             filetypes=[('Comma-Separated Values', '*.csv *.CSV')]
         )
         if filename:
             self.filename.set(filename)
+            try:
+                csv_read = m.CSVModel(filename=self.filename.get(),
+                                      filepath=None)
+            except Exception as e:
+                messagebox.showerror(
+                    title='Error',
+                    message='Problem reading file',
+                    detail=str(e)
+                )
+            else:
+                records = csv_read.get_all_records()
+                for row in records:
+                    self.data_model.add_landlords(row)
+                for row in records:
+                    self.data_model.add_property(row)
+                    self.data_model.add_tenant(row)
+                self.populate_recordlist()
 
     # save records to CSV file
     def on_file_export(self):
@@ -345,9 +361,9 @@ class Application(tk.Tk):
                     detail=str(e)
                 )
             else:
-                self.csv_model = m.CSVModel(filename=self.filename.get(),
-                                            filepath=mkdtemp())
-                self.csv_model.save_record(rows)
+                csv_write = m.CSVModel(filename=self.filename.get(),
+                                       filepath=None)
+                csv_write.save_record(rows)
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
