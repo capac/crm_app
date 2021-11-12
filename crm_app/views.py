@@ -277,10 +277,10 @@ class DeletePropertyForm(tk.Frame):
                                                   field_spec=fields['Property ID Dropdown'],
                                                   input_args={'values': updated_prop_ids})
         self.inputs['Property ID'].grid(row=0, column=0)
-        self.savebutton = w.LabelInput(propertyinfo, 'Delete property',
-                                       input_class=ttk.Button,
-                                       input_var=self.callbacks['on_delete_property'])
-        self.savebutton.grid(row=0, column=1, padx=10, pady=(16, 0))
+        self.deletebutton = w.LabelInput(propertyinfo, 'Delete property',
+                                         input_class=ttk.Button,
+                                         input_var=self.callbacks['on_delete_property'])
+        self.deletebutton.grid(row=0, column=1, padx=10, pady=(16, 0))
         propertyinfo.grid(row=0, column=0, sticky=tk.W)
         propertyinfo.columnconfigure(0, weight=1)
 
