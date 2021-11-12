@@ -112,8 +112,6 @@ class SQLModel:
     def __init__(self, host, database, user, password):
         self.connection = pg.connect(host=host, database=database, user=user,
                                      password=password, cursor_factory=DictCursor)
-        prop_ids = self.query("SELECT prop_id FROM properties ORDER BY prop_id")
-        self.fields['Property ID Dropdown']['values'] = [x['prop_id'] for x in prop_ids]
 
     def query(self, query, parameters=None):
         cursor = self.connection.cursor()
@@ -138,6 +136,10 @@ class SQLModel:
         self.query(self.create_dc_table_command)
         self.query(self.create_prop_tenant_view_command)
         self.query(self.create_doc_tenant_view_command)
+
+        # parses property values once database, tables and views exist
+        prop_ids = self.query("SELECT prop_id FROM properties ORDER BY prop_id")
+        self.fields['Property ID Dropdown']['values'] = [x['prop_id'] for x in prop_ids]
 
     def get_all_records(self):
         query = ('SELECT * FROM prop_tenant_view '
