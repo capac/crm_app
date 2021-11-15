@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 cfi_codes.py
+network.py
 *.code-workspace
 update_db.sql
 *.csv
