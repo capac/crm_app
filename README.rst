@@ -11,12 +11,12 @@ Features
 --------
 
 * Allow querying of tenant information by property identification
-* Provides list of documents sent to tenents by email
-* Allows printing of list of documents sent to tenant
+* Provides list of documents sent to tenants by email
+* Allows printing of list of documents sent to tenants
 * Provides a validated entry form to ensure correct data
 * Provides import and export functions for data
 * Provides add / delete property functions
-* Allow update of tenent information in property 
+* Allow update of tenant information in property 
 
 Author
 ======
@@ -26,8 +26,9 @@ Requirements
 ============
 
 * Python 3.x
-* Tkinter (part of the built-in packages in Python)
-* PostgreSQL (>=13.4)
+* Tkinter (normally part of the built-in packages in Python, however if installing Python 3.9.x and above with Homebrew you may need to install it separately (`brew install python-tk@3.9`)),
+* psycopg2, install with `python -m pip install psycopg2`,
+* PostgreSQL (>=13.4), install with `brew install postgresql@13`,
 * O365 (https://pypi.org/project/O365), install with `python -m pip install O365`.
 
 Usage
