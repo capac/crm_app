@@ -1,7 +1,6 @@
 from O365 import Account, FileSystemTokenBackend, MSGraphProtocol
 from os import environ
 from re import compile
-from pprint import pprint
 
 # account credentials saved as system variables
 client_id = environ['CLIENT_ID']
@@ -42,19 +41,22 @@ class RetrieveSentDocuments():
         pattern = compile(complete_str)
 
         for message in sent_messages:
-            email = {}
-            email['Subject'] = message.subject
-            email['Recipient'] = pattern.sub(r'\2', str(message.to._recipients[0]))
-            email['Date sent'] = str(message.sent)
-            if message.has_attachments:
-                attachments = [item.name for item in message.attachments]
-                email['Attachments'] = attachments
-            else:
-                email['Attachments'] = None
-            self.emails.append(email)
+            for name_and_email in message.to._recipients:
+                email = pattern.sub(r'\2', str(name_and_email))
+                if tenant_email == email:
+                    record = {}
+                    record['Subject'] = message.subject
+                    record['Recipient'] = email
+                    record['Date sent'] = str(message.sent)
+                    if message.has_attachments:
+                        attachments = [item.name for item in message.attachments]
+                        record['Attachments'] = attachments
+                    else:
+                        record['Attachments'] = []
+                    self.emails.append(record)
 
 
 if __name__ == '__main__':
     sent_docs = RetrieveSentDocuments(credentials=credentials)
     sent_docs.get()
-    pprint(f'{sent_docs.emails}')
+    print(f'{sent_docs.emails}')
