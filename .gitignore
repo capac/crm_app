@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 cfi_codes.py
-token.txt
+o365_token.txt
 *.code-workspace
 update_db.sql
 *.csv
