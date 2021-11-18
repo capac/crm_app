@@ -64,6 +64,7 @@ class Application(tk.Tk):
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
             'on_show_documents': self.show_documents,
+            'on_retrieve_emails': self.retrieve_emails,
             'on_print_list': self.print_list,
         }
 
@@ -309,6 +310,11 @@ class Application(tk.Tk):
         self.populate_documentlist()
 
     def print_list(self):
+        '''Print list of documents sent by email'''
+
+        pass
+
+    def retrieve_emails(self):
         '''Print list of documents sent by email'''
 
         sent_docs = n.RetrieveSentDocuments(self.settings)
