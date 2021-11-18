@@ -298,12 +298,10 @@ class DocumentList(tk.Frame):
 
     column_defs = {
         '#0': {'label': 'Row', 'anchor': tk.W},
-        'Document ID': {'label': 'Document ID', 'width': 60},
-        'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 80},
-        'First name': {'label': 'First name', 'width': 100},
-        'Last name': {'label': 'Last name', 'width': 100},
-        'Email': {'label': 'Email', 'width': 220},
-        'Document title': {'label': 'Document title', 'width': 400},
+        'Subject': {'label': 'Subject', 'width': 400},
+        'Recipient': {'label': 'Recipient', 'width': 220},
+        'Date sent': {'label': 'Date sent', 'width': 180},
+        'Attachments': {'label': 'Attachments', 'width': 400},
     }
     default_width = 100
     default_minwidth = 20
@@ -334,12 +332,16 @@ class DocumentList(tk.Frame):
 
         # add print button
         commandinfo = tk.LabelFrame(self, text='Command', padx=5, pady=5)
+        self.retrievebutton = w.LabelInput(commandinfo, 'Retrieve emails',
+                                           input_class=ttk.Button,
+                                           input_var=self.callbacks['on_retrieve_emails'])
+        self.retrievebutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
         self.printbutton = w.LabelInput(commandinfo, 'Print list',
                                         input_class=ttk.Button,
                                         input_var=self.callbacks['on_print_list'])
-        self.printbutton.grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 0))
+        self.printbutton.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
         commandinfo.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
-        commandinfo.columnconfigure(0, weight=1)
+        commandinfo.columnconfigure(1, weight=1)
 
         # configure treeview columns
         for name, definition in self.column_defs.items():
@@ -359,13 +361,12 @@ class DocumentList(tk.Frame):
             self.treeview.delete(row)
 
         valuekeys = list(self.column_defs.keys())[1:]
-        # print(f'rows: {rows}')
+        print(f'rows: {rows}')
         for rowdata in rows:
-            rowkey = (str(rowdata['Document ID']), str(rowdata['Property ID']),
-                      str(rowdata['First name']), str(rowdata['Last name']),
-                      str(rowdata['Email']), str(rowdata['Document title']))
+            rowkey = (str(rowdata['Subject']), str(rowdata['Recipient']),
+                      str(rowdata['Date sent']), str(rowdata['Attachments']))
             values = [rowdata[key] for key in valuekeys]
-            stringkey = '{}|{}|{}|{}|{}|{}'.format(*rowkey)
+            stringkey = '{}|{}|{}|{}'.format(*rowkey)
             self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
                                  values=values)
 
