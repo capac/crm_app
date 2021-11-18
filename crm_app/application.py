@@ -12,8 +12,8 @@ class Application(tk.Tk):
 
     # supported platforms: macOS and Windows
     config_dirs = {
-        'Darwin': "~/Library/Application Support",
-        'Windows': "~/AppData/Local",
+        'Darwin': "~/Library/Application Support/CRMApp",
+        'Windows': "~/AppData/Local/CRMApp",
     }
 
     def __init__(self, *args, **kwargs):
