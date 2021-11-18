@@ -261,6 +261,9 @@ class SettingsModel:
         'theme': {'type': 'str', 'value': 'aqua'},
         'db_host': {'type': 'str', 'value': 'localhost'},
         'db_name': {'type': 'str', 'value': 'housing_management'},
+        'client_id': {'type': 'str', 'value': None},
+        'client_secret': {'type': 'str', 'value': None},
+        'account_email': {'type': 'str', 'value': None},
     }
 
     def __init__(self, filename='settings.json', path='~'):
