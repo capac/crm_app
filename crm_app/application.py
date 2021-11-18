@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
 from . import views as v
 from . import models as m
+from . import network as n
 
 
 class Application(tk.Tk):
@@ -11,8 +12,8 @@ class Application(tk.Tk):
 
     # supported platforms: macOS and Windows
     config_dirs = {
-        'Darwin': '~/Library/Application Support',
-        'Windows': '~/AppData/Local',
+        'Darwin': "~/Library/Application Support",
+        'Windows': "~/AppData/Local",
     }
 
     def __init__(self, *args, **kwargs):
@@ -310,7 +311,9 @@ class Application(tk.Tk):
     def print_list(self):
         '''Print list of documents sent by email'''
 
-        pass
+        sent_docs = n.RetrieveSentDocuments(self.settings)
+        sent_docs.get(tenant_email='avarlotta@icloud.com')
+        print(sent_docs.emails)
 
     # import records from CSV file to database
     def on_file_import(self):
