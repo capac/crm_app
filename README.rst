@@ -25,9 +25,9 @@ Angelo Varlotta, 2021
 Requirements
 ============
 
-* Python 3.x
+* Python (>=3.8.x)
 * Tkinter (normally part of the built-in packages in Python, however if installing Python 3.9.x and above with Homebrew you may need to install it separately (`brew install python-tk@3.9`)),
-* psycopg2, install with `python -m pip install psycopg2`,
+* psycopg2 (>=2.8.6), install with `python -m pip install psycopg2` or `conda install psycopg2`,
 * PostgreSQL (>=13.4), install with `brew install postgresql@13`,
 * O365 (https://pypi.org/project/O365), install with `python -m pip install O365`.
 
