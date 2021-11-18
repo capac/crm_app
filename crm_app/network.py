@@ -1,36 +1,34 @@
 from O365 import Account, FileSystemTokenBackend, MSGraphProtocol
-from os import environ
 from re import compile
-
-# account credentials saved as system variables
-client_id = environ['CLIENT_ID']
-client_secret = environ['CLIENT_SECRET']
-account_email = environ['EMAIL']
-credentials = (client_id, client_secret)
 
 
 class RetrieveSentDocuments():
     '''Class for the retrieval of documents sent by email to tenants'''
 
-    def __init__(self, credentials):
-        self.credentials = credentials
+    def __init__(self, settings):
+        self.settings = settings
         self.emails = []
 
         # authenticated token and protocol
         protocol = MSGraphProtocol(api_version='beta')
         token_backend = FileSystemTokenBackend(token_path='.',
-                                               token_filename='token.txt')
+                                               token_filename='o365_token.txt')
 
         # create account with credentials, token and protocol
-        self.account = Account(self.credentials, token_backend=token_backend,
+        credentials = (self.settings['client_id'].get(),
+                       self.settings['client_secret'].get())
+        self.account = Account(credentials, token_backend=token_backend,
                                protocol=protocol)
 
     def get(self, tenant_email=None):
-        # refresh token if expired
+        # If it's your first login, you will have to visit a website to authenticate
+        # and paste the redirected URL in the console. Then your token will be stored.
+        # If you already have a valid token stored, then account.is_authenticated
+        # is True.
         if not self.account.is_authenticated:
             self.account.authenticate(scopes=['basic'])
 
-        mailbox = self.account.mailbox(resource=account_email)
+        mailbox = self.account.mailbox(resource=self.settings['account_email'].get())
         outbox = mailbox.sent_folder()
         sent_messages = outbox.get_messages(download_attachments=True)
 
@@ -54,9 +52,3 @@ class RetrieveSentDocuments():
                     else:
                         record['Attachments'] = []
                     self.emails.append(record)
-
-
-if __name__ == '__main__':
-    sent_docs = RetrieveSentDocuments(credentials=credentials)
-    sent_docs.get()
-    print(f'{sent_docs.emails}')
