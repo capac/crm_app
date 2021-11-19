@@ -198,8 +198,13 @@ class SQLModel:
         property_query = self.propriety_delete_query
         self.query(property_query, record)
 
+    def insert_retrieved_documents(self, record):
+        # insert retrieved emails in documents table
+        documents_query = self.documents_insert_query
+        return self.query(documents_query, record)
+
     def get_documents_by_email(self, email):
-        # get list of documents by email
+        # retrieves list of documents by email
         query = ('SELECT * FROM doc_tenant_view WHERE "Email" = %(email)s')
         results = self.query(query, {"email": email})
         return results if results else {}
