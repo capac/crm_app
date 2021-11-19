@@ -60,8 +60,6 @@ class SQLModel:
 
     create_dc_table_command = ('CREATE TABLE IF NOT EXISTS documents '
                                '(doc_id SERIAL UNIQUE NOT NULL, '
-                               'prop_id VARCHAR(7) NOT NULL REFERENCES '
-                               'properties(prop_id) ON DELETE CASCADE ON UPDATE CASCADE, '
                                'subject VARCHAR(200), '
                                'recipient VARCHAR(60) NOT NULL REFERENCES '
                                'tenants(email) ON DELETE CASCADE ON UPDATE CASCADE, '
@@ -85,14 +83,16 @@ class SQLModel:
 
     create_doc_tenant_view_command = ('CREATE OR REPLACE VIEW doc_tenant_view AS '
                                       '(SELECT dc.doc_id AS "Document ID", '
-                                      'dc.prop_id AS "Property ID", '
+                                      'tn.prop_id AS "Property ID", '
                                       'tn.first_name AS "First name", '
                                       'tn.last_name AS "Last name", '
-                                      'tn.email AS "Email", '
-                                      'dc.doc_title AS "Document title" '
+                                      'dc.recipient AS "Recipient", '
+                                      'dc.subject AS "Subject", '
+                                      'dc.date_sent AS "Date sent", '
+                                      'dc.attachments AS "Attachments" '
                                       'FROM documents AS dc '
                                       'JOIN tenants AS tn '
-                                      'ON dc.email = tn.email)')
+                                      'ON dc.recipient = tn.email)')
 
     # insert tenant in existing property
     tenants_insert_query = ('INSERT INTO tenants VALUES (%(Property ID)s, '
@@ -108,8 +108,12 @@ class SQLModel:
                               '%(Landlord ID)s, %(Flat number)s, %(Street)s, '
                               '%(Post code)s, %(City)s)')
 
-    # insert new landlord, used only on initial CRM app  setup
+    # insert new landlord, used only on initial CRM app setup
     landlords_insert_query = ('INSERT INTO landlords (ll_id) VALUES (%(Landlord ID)s) '
+                              'ON CONFLICT (ll_id) DO NOTHING')
+
+    # retrieve and insert new emails in documents table
+    documents_insert_query = ('INSERT INTO documents VALUES (%(Landlord ID)s) '
                               'ON CONFLICT (ll_id) DO NOTHING')
 
     # delete old property, used rarely

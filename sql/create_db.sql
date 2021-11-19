@@ -55,9 +55,11 @@ CREATE VIEW doc_tenant_view AS (
            dc.prop_id AS "Property ID",
            tn.first_name AS "First name",
            tn.last_name AS "Last name",
-           tn.email AS "Email",
-           dc.doc_title AS "Document title"
+           dc.recipient AS "Recipient",
+           dc.subject AS "Subject",
+           dc.date_sent AS "Date sent",
+           dc.attachments AS "Attachments"
     FROM documents AS dc
         JOIN tenants AS tn
-        ON dc.email = tn.email
+        ON dc.recipient = tn.email
         );
