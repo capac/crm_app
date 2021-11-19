@@ -113,8 +113,8 @@ class SQLModel:
                               'ON CONFLICT (ll_id) DO NOTHING')
 
     # retrieve and insert new emails in documents table
-    documents_insert_query = ('INSERT INTO documents VALUES (%(Landlord ID)s) '
-                              'ON CONFLICT (ll_id) DO NOTHING')
+    documents_insert_query = ('INSERT INTO documents VALUES (%(Subject)s, %(Recipient)s, %(Date sent)s, '
+                              '%(Attachments)s)')
 
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
