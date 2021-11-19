@@ -28,8 +28,10 @@ CREATE TABLE IF NOT EXISTS tenants (
 CREATE TABLE IF NOT EXISTS documents (
     doc_id SERIAL UNIQUE NOT NULL,
     prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    email VARCHAR(60) NOT NULL REFERENCES tenants(email) ON DELETE CASCADE ON UPDATE CASCADE,
-    doc_title VARCHAR(200),
+    subject VARCHAR(200),
+    recipient VARCHAR(60) NOT NULL REFERENCES tenants(email) ON DELETE CASCADE ON UPDATE CASCADE,
+    date_sent TIMESTAMP,
+    attachments VARCHAR(200),
     PRIMARY KEY(doc_id)
     );
 
