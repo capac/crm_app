@@ -27,12 +27,11 @@ CREATE TABLE IF NOT EXISTS tenants (
 
 CREATE TABLE IF NOT EXISTS documents (
     doc_id SERIAL UNIQUE NOT NULL,
-    prop_id VARCHAR(7) NOT NULL REFERENCES properties(prop_id) ON DELETE CASCADE ON UPDATE CASCADE,
     subject VARCHAR(200),
     recipient VARCHAR(60) NOT NULL REFERENCES tenants(email) ON DELETE CASCADE ON UPDATE CASCADE,
     date_sent TIMESTAMP,
     attachments VARCHAR(200),
-    PRIMARY KEY(doc_id)
+    PRIMARY KEY(date_sent)
     );
 
 CREATE VIEW prop_tenant_view AS (
@@ -52,7 +51,7 @@ CREATE VIEW prop_tenant_view AS (
 
 CREATE VIEW doc_tenant_view AS (
     SELECT dc.doc_id AS "Document ID",
-           dc.prop_id AS "Property ID",
+           tn.prop_id AS "Property ID",
            tn.first_name AS "First name",
            tn.last_name AS "Last name",
            dc.recipient AS "Recipient",
