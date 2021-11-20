@@ -275,6 +275,7 @@ class Application(tk.Tk):
 
         email = self.recordform.inputs['Email'].get()
         try:
+            self.retrieve_emails(email)
             rows = self.data_model.get_documents_by_email(email)
         except Exception as e:
             messagebox.showerror(
@@ -314,12 +315,14 @@ class Application(tk.Tk):
 
         pass
 
-    def retrieve_emails(self):
-        '''Print list of documents sent by email'''
+    def retrieve_emails(self, email):
+        '''Retrieve list of documents sent by email'''
 
         sent_docs = n.RetrieveSentDocuments(self.settings)
-        sent_docs.get(tenant_email='avarlotta@icloud.com')
-        print(sent_docs.emails)
+        sent_docs.get(tenant_email=email)
+        for email in sent_docs.emails:
+            self.data_model.insert_retrieved_documents(email)
+        # print(sent_docs.emails)
 
     # import records from CSV file to database
     def on_file_import(self):
