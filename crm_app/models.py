@@ -65,7 +65,7 @@ class SQLModel:
                                'tenants(email) ON DELETE CASCADE ON UPDATE CASCADE, '
                                'date_sent TIMESTAMP, '
                                'attachments VARCHAR(200), '
-                               'PRIMARY KEY(doc_id))')
+                               'PRIMARY KEY(date_sent))')
 
     create_prop_tenant_view_command = ('CREATE OR REPLACE VIEW prop_tenant_view AS '
                                        '(SELECT pr.prop_id AS "Property ID", '
@@ -113,8 +113,10 @@ class SQLModel:
                               'ON CONFLICT (ll_id) DO NOTHING')
 
     # retrieve and insert new emails in documents table
-    documents_insert_query = ('INSERT INTO documents VALUES (%(Subject)s, %(Recipient)s, %(Date sent)s, '
-                              '%(Attachments)s)')
+    documents_insert_query = ('INSERT INTO documents (subject, recipient, date_sent, '
+                              'attachments) VALUES (%(Subject)s, %(Recipient)s, '
+                              '%(Date sent)s, %(Attachments)s) ON CONFLICT (date_sent) '
+                              'DO NOTHING')
 
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
@@ -205,7 +207,7 @@ class SQLModel:
 
     def get_documents_by_email(self, email):
         # retrieves list of documents by email
-        query = ('SELECT * FROM doc_tenant_view WHERE "Email" = %(email)s')
+        query = ('SELECT * FROM doc_tenant_view WHERE "Recipient" = %(email)s')
         results = self.query(query, {"email": email})
         return results if results else {}
 
