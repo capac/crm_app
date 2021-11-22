@@ -47,8 +47,8 @@ class RetrieveSentDocuments():
                     record['Recipient'] = email
                     record['Date sent'] = str(message.sent)
                     if message.has_attachments:
-                        attachments = [item.name for item in message.attachments]
+                        attachments = list(attachment.name for attachment in message.attachments)
                         record['Attachments'] = attachments
                     else:
-                        record['Attachments'] = []
+                        record['Attachments'] = None
                     self.emails.append(record)
