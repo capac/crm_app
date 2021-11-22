@@ -203,7 +203,7 @@ class SQLModel:
     def insert_retrieved_documents(self, record):
         # insert retrieved emails in documents table
         documents_query = self.documents_insert_query
-        return self.query(documents_query, record)
+        self.query(documents_query, record)
 
     def get_documents_by_email(self, email):
         # retrieves list of documents by email
