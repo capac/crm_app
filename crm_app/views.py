@@ -361,14 +361,15 @@ class DocumentList(tk.Frame):
             self.treeview.delete(row)
 
         valuekeys = list(self.column_defs.keys())[1:]
-        print(f'rows: {rows}')
         for rowdata in rows:
+            split_attachments = rowdata['Attachments'][1:-1].split(',') if \
+                isinstance(rowdata['Attachments'], str) else None
+            rowdata['Attachments'] = split_attachments
             rowkey = (str(rowdata['Subject']), str(rowdata['Recipient']),
                       str(rowdata['Date sent']), str(rowdata['Attachments']))
             values = [rowdata[key] for key in valuekeys]
             stringkey = '{}|{}|{}|{}'.format(*rowkey)
-            self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
-                                 values=values)
+            self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
 
 
 class RecordList(tk.Frame):
