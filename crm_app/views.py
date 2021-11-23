@@ -362,14 +362,23 @@ class DocumentList(tk.Frame):
 
         valuekeys = list(self.column_defs.keys())[1:]
         for rowdata in rows:
-            split_attachments = rowdata['Attachments'][1:-1].split(',') if \
-                isinstance(rowdata['Attachments'], str) else None
-            rowdata['Attachments'] = split_attachments
+            # if there are no attachments in the sent email
+            att = rowdata['Attachments']
+            split_attachments = att[1:-1].split(',') if isinstance(att, str) else None
             rowkey = (str(rowdata['Subject']), str(rowdata['Recipient']),
                       str(rowdata['Date sent']), str(rowdata['Attachments']))
             values = [rowdata[key] for key in valuekeys]
             stringkey = '{}|{}|{}|{}'.format(*rowkey)
-            self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
+            if split_attachments is None:
+                self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
+            # for email with attachments
+            else:
+                for attach in split_attachments:
+                    rowkey = (str(rowdata['Subject']), str(rowdata['Recipient']),
+                              str(rowdata['Date sent']), str(attach))
+                    stringkey = '{}|{}|{}|{}'.format(*rowkey)
+                    values = [rowdata[key] for key in valuekeys[:-1]] + [attach]
+                    self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
 
 
 class RecordList(tk.Frame):
