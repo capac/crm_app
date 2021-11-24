@@ -365,6 +365,7 @@ class DocumentList(tk.Frame):
         self.treeview.tag_configure('evenrow', background='lightblue')
 
         valuekeys = list(self.column_defs.keys())[1:]
+        row_count = 0
         for rowdata in rows:
             # if there are no attachments in the sent email
             att = rowdata['Attachments']
@@ -375,6 +376,7 @@ class DocumentList(tk.Frame):
             stringkey = '{}|{}|{}|{}'.format(*rowkey)
             if split_attachments is None:
                 self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
+                row_count += 1
             # for email with one or more attachments
             else:
                 for attach in split_attachments:
@@ -386,6 +388,8 @@ class DocumentList(tk.Frame):
                         self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values, tags=('evenrow',))
                     else:
                         self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values, tags=('oddrow',))
+                    row_count += 1
+        self.count = row_count
 
 
 class RecordList(tk.Frame):
