@@ -280,14 +280,14 @@ class Application(tk.Tk):
         except Exception as e:
             messagebox.showerror(
                 title='Error',
-                message='Problem loading document(s)',
+                message='Problem loading email(s)',
                 detail=str(e)
             )
-            self.status.set('Problem loading document(s)')
+            self.status.set('Problem loading email(s)')
         else:
-            self.documents_loaded = len(rows)
-            self.status.set(f'{self.documents_loaded} document(s) listed this session')
             self.documentform.populate(rows)
+            self.emails_loaded = str(self.documentform.count)
+            self.status.set(f'{self.emails_loaded} email(s) listed in this session')
 
     def show_documents(self):
         '''Opens window showing list of documents to tenants'''
