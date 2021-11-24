@@ -64,7 +64,7 @@ class Application(tk.Tk):
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
             'on_show_documents': self.show_documents,
-            'on_retrieve_emails': self.retrieve_emails,
+            'on_retrieve_emails': self.populate_documentlist,
             'on_print_list': self.print_list,
         }
 
