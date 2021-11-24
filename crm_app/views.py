@@ -360,6 +360,10 @@ class DocumentList(tk.Frame):
         for row in self.treeview.get_children():
             self.treeview.delete(row)
 
+        # create striped row tags
+        self.treeview.tag_configure('oddrow', background='white')
+        self.treeview.tag_configure('evenrow', background='lightblue')
+
         valuekeys = list(self.column_defs.keys())[1:]
         for rowdata in rows:
             # if there are no attachments in the sent email
@@ -371,14 +375,17 @@ class DocumentList(tk.Frame):
             stringkey = '{}|{}|{}|{}'.format(*rowkey)
             if split_attachments is None:
                 self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
-            # for email with attachments
+            # for email with one or more attachments
             else:
                 for attach in split_attachments:
                     rowkey = (str(rowdata['Subject']), str(rowdata['Recipient']),
                               str(rowdata['Date sent']), str(attach))
                     stringkey = '{}|{}|{}|{}'.format(*rowkey)
                     values = [rowdata[key] for key in valuekeys[:-1]] + [attach]
-                    self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
+                    if len(split_attachments) > 1:
+                        self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values, tags=('evenrow',))
+                    else:
+                        self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values, tags=('oddrow',))
 
 
 class RecordList(tk.Frame):
