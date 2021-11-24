@@ -95,6 +95,7 @@ class Application(tk.Tk):
         self.statusbar.columnconfigure(0, weight=1)
 
         self.records_saved = 0
+        self.records_deleted = 0
 
     def populate_recordlist(self):
         try:
@@ -265,8 +266,8 @@ class Application(tk.Tk):
             )
             self.status.set('Problem deleting record')
         else:
-            self.records_saved += 1
-            self.status.set(f'{self.records_saved} record(s) deleted this session')
+            self.records_deleted += 1
+            self.status.set(f'{self.records_deleted} record(s) deleted this session')
             self.populate_recordlist()
             self.delete_window.destroy()
 
