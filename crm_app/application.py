@@ -322,7 +322,6 @@ class Application(tk.Tk):
         sent_docs.get(tenant_email=email)
         for email in sent_docs.emails:
             self.data_model.insert_retrieved_documents(email)
-        # print(sent_docs.emails)
 
     # import records from CSV file to database
     def on_file_import(self):
