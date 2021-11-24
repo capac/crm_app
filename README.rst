@@ -33,11 +33,21 @@ Requirements
 
 Installation
 ============
-In order for the O365 package to work, you will need to follow the instructions in the O365 documentation (https://pypi.org/project/O365), especially at the 'Authentication Steps' paragraph. You will need to register the application on the Azure Portal and generate a new application client ID and client secret. Read the documentation for more details.
+In order for the O365 package to work, you will need to follow the instructions in the O365 documentation (https://pypi.org/project/O365), especially at the 'Authentication Steps' paragraph. You will need to register the application on the Azure Portal and generate a new application client ID and client secret. Read the O365 documentation for more details.
 
 Usage
 =====
 
-To start the application, run:
+To start the application, run in the root directory:
 
    python crm_app/crm_app.py
+
+
+Issues
+======
+
+* Printing of the documents sent by email still hasn't been implemented.
+
+* The program connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so requires an internet connection to work. However the sent emails with attachment names are saved locally in the database every time the 'Show Docuemnts' button is pressed.
+
+* Emails already present aren't updated, however sent emails deleted remotely aren't removed locally.
