@@ -25,9 +25,6 @@ class SQLModel:
         'First name': {'req': True, 'type': FT.string},
         'Last name': {'req': True, 'type': FT.string},
         'Email': {'req': True, 'type': FT.string},
-        # this value is populated from the documents in the
-        #  email attachments using the Microsoft Graph API
-        # 'Document': {'req': True, 'type': FT.long_string},
     }
 
     # create database if not existing
@@ -225,9 +222,13 @@ class CSVModel:
         'First name': {'req': True, 'type': FT.string},
         'Last name': {'req': True, 'type': FT.string},
         'Email': {'req': True, 'type': FT.string},
-        # this variable will need to be changed when the
-        # list of documents sent by email is implemented
-        # 'Document': {'req': True, 'type': FT.long_string},
+    }
+
+    document_fields = {
+        'Subject': {'req': True, 'type': FT.string},
+        'Recipient': {'req': True, 'type': FT.string},
+        'Date sent': {'req': True, 'type': FT.iso_date_string},
+        'Attachment': {'req': True, 'type': FT.string},
     }
 
     def __init__(self, filename, filepath=None):
@@ -256,11 +257,11 @@ class CSVModel:
             else:
                 return list(csvreader)
 
-    def save_record(self, rows):
+    def save_record(self, rows, keys):
         '''Save a dict of data to a CSV file'''
 
         with open(self.filename, 'w') as fh:
-            csvwriter = csv.DictWriter(fh, fieldnames=self.fields.keys())
+            csvwriter = csv.DictWriter(fh, fieldnames=keys)
             csvwriter.writeheader()
             for row in rows:
                 csvwriter.writerow(row)
