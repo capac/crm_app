@@ -10,13 +10,12 @@ This program provides a graphical user interface for the management of tenants i
 Features
 --------
 
-* Allow querying of tenant information by property identification
-* Provides list of documents sent to tenants by email
-* Allows printing of list of documents sent to tenants
 * Provides a validated entry form to ensure correct data
-* Provides import and export functions for data
+* Allows update of tenant information in property 
 * Provides add / delete property functions
-* Allow update of tenant information in property 
+* Provides import and export functions for data
+* Provides list of documents sent to tenants by email
+* Allows saving to CSV file of the list of documents sent to tenants
 
 Author
 ======
@@ -46,7 +45,7 @@ To start the application, run in the root directory:
 Issues
 ======
 
-* Printing of the documents sent by email still hasn't been implemented.
+* Querying of tenant information by property identification still hasn't been implemented.
 
 * The program connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so requires an internet connection to work. However the sent emails with attachment names are saved locally in the database every time the 'Show Docuemnts' button is pressed.
 
