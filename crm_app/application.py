@@ -312,9 +312,28 @@ class Application(tk.Tk):
         self.populate_documentlist()
 
     def print_list(self):
-        '''Print list of documents sent by email'''
+        '''Save list of documents sent by email to file'''
 
-        pass
+        filename = filedialog.asksaveasfilename(
+            title='Select the target file for saving records',
+            defaultextension='.csv',
+            filetypes=[('Comma-Separated Values', '*.csv *.CSV')]
+        )
+        if filename:
+            self.filename.set(filename)
+            try:
+                document_keys = m.CSVModel.document_fields.keys()
+                rows = self.documentform.save_documentlist_to_file()
+                documents_list = list({key: value for key, value in zip(document_keys, row)} for row in rows)
+            except Exception as e:
+                messagebox.showerror(
+                    title='Error',
+                    message='Problem writing to file',
+                    detail=str(e)
+                )
+            else:
+                csv_write = m.CSVModel(filename=self.filename.get(), filepath=None)
+                csv_write.save_record(documents_list, csv_write.document_fields.keys())
 
     def retrieve_emails(self, email):
         '''Retrieve list of documents sent by email'''
@@ -375,7 +394,7 @@ class Application(tk.Tk):
             else:
                 csv_write = m.CSVModel(filename=self.filename.get(),
                                        filepath=None)
-                csv_write.save_record(rows)
+                csv_write.save_record(rows, csv_write.fields.keys())
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
