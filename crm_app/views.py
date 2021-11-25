@@ -332,11 +332,11 @@ class DocumentList(tk.Frame):
 
         # add print button
         commandinfo = tk.LabelFrame(self, text='Command', padx=5, pady=5)
-        self.retrievebutton = w.LabelInput(commandinfo, 'Retrieve emails',
+        self.retrievebutton = w.LabelInput(commandinfo, 'Refresh list',
                                            input_class=ttk.Button,
                                            input_var=self.callbacks['on_retrieve_emails'])
         self.retrievebutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
-        self.printbutton = w.LabelInput(commandinfo, 'Print list',
+        self.printbutton = w.LabelInput(commandinfo, 'Save list to file',
                                         input_class=ttk.Button,
                                         input_var=self.callbacks['on_print_list'])
         self.printbutton.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
@@ -390,6 +390,15 @@ class DocumentList(tk.Frame):
                         self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values, tags=('oddrow',))
                     row_count += 1
         self.count = row_count
+
+    def save_documentlist_to_file(self):
+        '''Appends records from the document table to a Python list'''
+
+        rows = []
+        for rowkey in self.treeview.get_children():
+            row = self.treeview.item(rowkey)['values']
+            rows.append(row)
+        return rows
 
 
 class RecordList(tk.Frame):
