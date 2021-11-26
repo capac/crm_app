@@ -1,7 +1,6 @@
 import platform
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-from datetime import datetime
 from . import views as v
 from . import models as m
 from . import network as n
@@ -28,11 +27,6 @@ class Application(tk.Tk):
 
         self.inserted_rows = []
         self.updated_rows = []
-
-        # filename variable
-        datestring = datetime.today().strftime('%Y-%m-%d')
-        default_filename = f'data_record_{datestring}.csv'
-        self.filename = tk.StringVar(value=default_filename)
 
         # settings model and settings
         config_dir = self.config_dirs.get(platform.system(), '~')
@@ -151,17 +145,15 @@ class Application(tk.Tk):
             self.status.set('Problem saving record')
         else:
             self.records_saved += 1
-            self.status.set(f'{self.records_saved} record(s) saved this session')
+            self.status.set(f'{self.records_saved} record(s) updated this session')
             key = (data['Property ID'], data['First name'], data['Last name'], data['Email'])
+            # old property with updated tenant
             if self.data_model.last_write == 'update tenant':
                 self.updated_rows.append(key)
-            else:
-                # new property with tenant added
+            # new property with added tenant
+            elif self.data_model.last_write == 'insert tenant':
                 self.inserted_rows.append(key)
             self.populate_recordlist()
-            # reset form only when appending records
-            if self.data_model.last_write == 'insert tenant':
-                self.recordform.reset()
 
     def open_add_property_window(self):
         '''Opens window for addition of new property into database'''
