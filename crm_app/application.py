@@ -1,6 +1,7 @@
 import platform
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
+from datetime import datetime
 from . import views as v
 from . import models as m
 from . import network as n
@@ -27,6 +28,11 @@ class Application(tk.Tk):
 
         self.inserted_rows = []
         self.updated_rows = []
+
+        # default name for filename
+        datestring = datetime.today().strftime("%Y-%m-%d")
+        default_filename = f'data_record_{datestring}.csv'
+        self.filename = tk.StringVar(value=default_filename)
 
         # settings model and settings
         config_dir = self.config_dirs.get(platform.system(), '~')
@@ -83,12 +89,13 @@ class Application(tk.Tk):
         self.recordform.columnconfigure(0, weight=1)
 
         # status bar
-        self.status = tk.StringVar()
-        self.statusbar = ttk.Label(self, textvariable=self.status)
-        self.statusbar.grid(row=3, padx=10, sticky=('WE'))
-        self.statusbar.columnconfigure(0, weight=1)
+        self.main_status = tk.StringVar()
+        self.main_statusbar = ttk.Label(self, textvariable=self.main_status)
+        self.main_statusbar.grid(row=3, padx=10, sticky=('WE'))
+        self.main_statusbar.columnconfigure(0, weight=1)
 
         self.records_saved = 0
+        self.records_updated = 0
         self.records_deleted = 0
 
     def populate_recordlist(self):
@@ -142,10 +149,10 @@ class Application(tk.Tk):
                 message='Problem saving record',
                 detail=str(e)
             )
-            self.status.set('Problem saving record')
+            self.main_status.set('Problem saving record')
         else:
-            self.records_saved += 1
-            self.status.set(f'{self.records_saved} record(s) updated this session')
+            self.records_updated += 1
+            self.main_status.set(f'{self.records_updated} record(s) updated this session')
             key = (data['Property ID'], data['First name'], data['Last name'], data['Email'])
             # old property with updated tenant
             if self.data_model.last_write == 'update tenant':
@@ -198,10 +205,10 @@ class Application(tk.Tk):
                 message='Problem saving record',
                 detail=str(e)
             )
-            self.status.set('Problem saving record')
+            self.main_status.set('Problem saving record')
         else:
             self.records_saved += 1
-            self.status.set(f'{self.records_saved} record(s) saved this session')
+            self.main_status.set(f'{self.records_saved} record(s) added this session')
             key = (data['Property ID'], data['Landlord ID'], data['Flat number'],
                    data['Street'], data['Post code'], data['City'])
             if self.data_model.last_write == 'insert property':
@@ -237,12 +244,6 @@ class Application(tk.Tk):
         self.deletepropertyform.grid(row=0, padx=5, sticky='W')
         self.deletepropertyform.columnconfigure(0, weight=1)
 
-        # status bar
-        self.status = tk.StringVar()
-        self.statusbar = ttk.Label(self.delete_window, textvariable=self.status)
-        self.statusbar.grid(row=1, padx=10, sticky=('WE'))
-        self.statusbar.columnconfigure(0, weight=1)
-
     def delete_property(self):
         '''Removes property from database'''
 
@@ -256,10 +257,10 @@ class Application(tk.Tk):
                 message='Problem deleting record',
                 detail=str(e)
             )
-            self.status.set('Problem deleting record')
+            self.main_status.set('Problem deleting record')
         else:
             self.records_deleted += 1
-            self.status.set(f'{self.records_deleted} record(s) deleted this session')
+            self.main_status.set(f'{self.records_deleted} record(s) deleted this session')
             self.populate_recordlist()
             self.delete_window.destroy()
 
@@ -276,11 +277,14 @@ class Application(tk.Tk):
                 message='Problem loading email(s)',
                 detail=str(e)
             )
-            self.status.set('Problem loading email(s)')
+            self.docs_status.set('Problem loading email(s)')
         else:
+            # status on sent email retrieval
+            sent_email_account = self.settings_model.variables['account_email']['value']
+            self.main_status.set(f'''Retrieved sent emails from '{sent_email_account}' account...''')
             self.documentform.populate(rows)
             self.emails_loaded = str(self.documentform.count)
-            self.status.set(f'{self.emails_loaded} email(s) listed in this session')
+            self.docs_status.set(f'{self.emails_loaded} email(s) listed in this session')
 
     def show_documents(self):
         '''Opens window showing list of documents to tenants'''
@@ -295,10 +299,10 @@ class Application(tk.Tk):
         self.documentform.grid(row=0, padx=5, sticky='NSEW')
 
         # status bar
-        self.status = tk.StringVar()
-        self.statusbar = ttk.Label(self.docs_window, textvariable=self.status)
-        self.statusbar.grid(row=1, padx=10, sticky=(tk.W + tk.E))
-        self.statusbar.columnconfigure(0, weight=1)
+        self.docs_status = tk.StringVar()
+        self.docs_statusbar = ttk.Label(self.docs_window, textvariable=self.docs_status)
+        self.docs_statusbar.grid(row=1, padx=10, sticky=(tk.W + tk.E))
+        self.docs_statusbar.columnconfigure(0, weight=1)
 
         # populate the treeview with documents
         self.populate_documentlist()
@@ -362,6 +366,7 @@ class Application(tk.Tk):
                 for row in records:
                     self.data_model.add_property(row)
                     self.data_model.add_tenant(row)
+                self.main_status.set(f'''Loaded data into \'{self.settings['db_name'].get()}\'''')
                 self.populate_recordlist()
 
     # save records to CSV file
@@ -384,6 +389,7 @@ class Application(tk.Tk):
                     detail=str(e)
                 )
             else:
+                self.main_status.set(f'Saved data to \'{self.filename.get().__name__ }\'')
                 csv_write = m.CSVModel(filename=self.filename.get(),
                                        filepath=None)
                 csv_write.save_record(rows, csv_write.fields.keys())
