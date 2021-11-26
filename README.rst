@@ -13,8 +13,8 @@ Features
 * Provides a validated entry form to ensure correct data
 * Allows update of tenant information in property 
 * Provides add / delete property functions
-* Provides import and export functions for data
-* Provides list of documents sent to tenants by email
+* Provides import and export functions for tenant data
+* Provides list of documents sent by email to tenants
 * Allows saving to CSV file of the list of documents sent to tenants
 
 Author
@@ -34,10 +34,12 @@ Installation
 ============
 In order for the O365 package to work, you will need to follow the instructions in the O365 documentation (https://pypi.org/project/O365), especially at the 'Authentication Steps' paragraph. You will need to register the application on the Azure Portal and generate a new application client ID and client secret. Read the O365 documentation for more details.
 
+Personal settings, such as the Microsoft account email, application client ID and client secret are saved in the 'settings.json file', which is created the first time the program is run and is located differently according to the platform: "~/Library/Application Support/CRMApp" for macOS and "~/AppData/Local/CRMApp" for Windows. Edit the file to add your personal settings.
+
 Usage
 =====
 
-To start the application, run in the root directory:
+To start the application, run in the application root directory:
 
    python crm_app/crm_app.py
 
@@ -47,6 +49,14 @@ Issues
 
 * Querying of tenant information by property identification still hasn't been implemented.
 
-* The program connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so requires an internet connection to work. However the sent emails with attachment names are saved locally in the database every time the 'Show Docuemnts' button is pressed.
+* The program first connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so requires an internet connection to work. The program will fail if there is no internet connection, even though previous queries are saved locally to the database.
 
 * Emails already present aren't updated, however sent emails deleted remotely aren't removed locally.
+
+
+TODO
+====
+
+* Check button to remove emails with no attachments
+* Bar chart showing tenant occupancy in the properties
+* Bar chart showing number of properties per landlord
