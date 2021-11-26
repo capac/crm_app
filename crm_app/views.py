@@ -129,21 +129,6 @@ class DataRecordForm(tk.Frame):
         self.documentsbutton.grid(row=0, column=1, padx=10, pady=(10, 0))
         command_section.grid(row=4, column=0, sticky=(tk.W + tk.E))
 
-    def reset(self):
-        '''Resets the form entries'''
-
-        # clear all values
-        for widget in self.inputs.values():
-            widget.set('')
-
-        self.focus_next_empty()
-
-    def focus_next_empty(self):
-        for labelwidget in self.inputs.values():
-            if (labelwidget.get() == ''):
-                labelwidget.input.focus()
-                break
-
     def get(self):
         '''Retrieve data from Tkinter and place it in regular Python objects'''
 
