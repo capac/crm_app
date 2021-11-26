@@ -150,9 +150,9 @@ class LabelInput(tk.Frame):
         else:
             self.variable = input_var
 
-        if input_class == ttk.Button:
+        if input_class in (ttk.Checkbutton, ttk.Button):
             input_args['text'] = label
-            input_args['command'] = input_var
+            input_args['command'] = self.variable
         else:
             self.label = ttk.Label(self, text=label, width=25, **label_args)
             self.label.grid(row=0, column=0, sticky=(tk.W + tk.E))
