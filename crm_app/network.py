@@ -21,10 +21,7 @@ class RetrieveSentDocuments():
         self.account = Account(self.credentials, token_backend=token_backend,
                                protocol=protocol)
 
-        # If it's your first login, you will have to visit a website to authenticate
-        # and paste the redirected URL in the console. Then your token will be stored.
-        # If you already have a valid token stored, then account.is_authenticated
-        # is True.
+        # authentication step for account
         if not self.account.is_authenticated:
             self.account.authenticate(scopes=['basic'])
 
