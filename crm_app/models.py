@@ -106,14 +106,12 @@ class SQLModel:
                               '%(Post code)s, %(City)s)')
 
     # insert new landlord, used only on initial CRM app setup
-    landlords_insert_query = ('INSERT INTO landlords (ll_id) VALUES (%(Landlord ID)s) '
-                              'ON CONFLICT (ll_id) DO NOTHING')
+    landlords_insert_query = ('INSERT INTO landlords (ll_id) VALUES (%(Landlord ID)s)')
 
     # retrieve and insert new emails in documents table
     documents_insert_query = ('INSERT INTO documents (subject, recipient, date_sent, '
                               'attachments) VALUES (%(Subject)s, %(Recipient)s, '
-                              '%(Date sent)s, %(Attachments)s) ON CONFLICT (date_sent) '
-                              'DO NOTHING')
+                              '%(Date sent)s, %(Attachments)s)')
 
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
@@ -190,7 +188,11 @@ class SQLModel:
     def add_landlords(self, record):
         # add property information
         landlords_query = self.landlords_insert_query
-        self.query(landlords_query, record)
+        try:
+            self.query(landlords_query, record)
+        # landlord(s) are already present in the database
+        except pg.IntegrityError:
+            pass
 
     def delete_property(self, record):
         # delete property information
@@ -200,7 +202,11 @@ class SQLModel:
     def insert_retrieved_documents(self, record):
         # insert retrieved emails in documents table
         documents_query = self.documents_insert_query
-        self.query(documents_query, record)
+        try:
+            self.query(documents_query, record)
+        # email(s) are already present in the database at the date sent
+        except pg.IntegrityError:
+            pass
 
     def get_documents_by_email(self, email):
         # retrieves list of documents by email
