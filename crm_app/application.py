@@ -334,10 +334,18 @@ class Application(tk.Tk):
     def retrieve_emails(self, email):
         '''Retrieve list of documents sent by email'''
 
-        sent_docs = n.RetrieveSentDocuments(self.settings)
-        sent_docs.get(tenant_email=email)
-        for email in sent_docs.emails:
-            self.data_model.insert_retrieved_documents(email)
+        try:
+            sent_docs = n.RetrieveSentDocuments(self.settings)
+            sent_docs.get(tenant_email=email)
+        except Exception as e:
+            messagebox.showerror(
+                title='Error',
+                message='Problem retrieving email(s)',
+                details=str(e)
+            )
+        else:
+            for email in sent_docs.emails:
+                self.data_model.insert_retrieved_documents(email)
 
     # import records from CSV file to database
     def on_file_import(self):
