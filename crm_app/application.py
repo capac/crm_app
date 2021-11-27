@@ -328,6 +328,7 @@ class Application(tk.Tk):
                     detail=str(e)
                 )
             else:
+                self.docs_status.set(f'Saved data to \'{self.filename.get()}\'')
                 csv_write = m.CSVModel(filename=self.filename.get(), filepath=None)
                 csv_write.save_record(documents_list, csv_write.document_fields.keys())
 
@@ -397,7 +398,7 @@ class Application(tk.Tk):
                     detail=str(e)
                 )
             else:
-                self.main_status.set(f'Saved data to \'{self.filename.get().__name__ }\'')
+                self.main_status.set(f'Saved data to \'{self.filename.get()}\'')
                 csv_write = m.CSVModel(filename=self.filename.get(),
                                        filepath=None)
                 csv_write.save_record(rows, csv_write.fields.keys())
