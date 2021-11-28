@@ -210,7 +210,8 @@ class SQLModel:
 
     def get_documents_by_email(self, email):
         # retrieves list of documents by email
-        query = ('SELECT * FROM doc_tenant_view WHERE "Recipient" = %(email)s')
+        query = ('SELECT * FROM doc_tenant_view WHERE "Recipient" = %(email)s '
+                 'ORDER BY "Date sent"')
         results = self.query(query, {"email": email})
         return results if results else {}
 
