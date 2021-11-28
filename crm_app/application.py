@@ -269,7 +269,9 @@ class Application(tk.Tk):
 
         email = self.recordform.inputs['Email'].get()
         try:
+            # retrieves email(s) from Microsoft Outlook/Office365/Exchange account
             self.retrieve_emails(email)
+            # populates document list with sent emails from 'docuemnts' table in database
             rows = self.data_model.get_documents_by_email(email)
         except Exception as e:
             messagebox.showerror(
@@ -281,10 +283,13 @@ class Application(tk.Tk):
         else:
             # status on sent email retrieval
             sent_email_account = self.settings_model.variables['account_email']['value']
-            self.main_status.set(f'''Retrieved sent emails from '{sent_email_account}' account...''')
             self.documentform.populate(rows)
-            self.emails_loaded = str(self.documentform.count)
-            self.docs_status.set(f'{self.emails_loaded} email(s) listed in this session')
+            emails_loaded = str(self.documentform.count)
+            retrieved_message = f'''Retrieved emails sent from '{sent_email_account}' to '{email}', '''
+            status_message = f'''{emails_loaded} email(s) listed in this session.'''
+            docs_message = f'{retrieved_message}{status_message}'
+            self.main_status.set(docs_message)
+            self.docs_status.set(docs_message)
 
     def show_documents(self):
         '''Opens window showing list of documents to tenants'''
