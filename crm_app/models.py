@@ -56,8 +56,7 @@ class SQLModel:
                                'PRIMARY KEY(email))')
 
     create_dc_table_command = ('CREATE TABLE IF NOT EXISTS documents '
-                               '(doc_id SERIAL UNIQUE NOT NULL, '
-                               'subject VARCHAR(200), '
+                               '(subject VARCHAR(200), '
                                'recipient VARCHAR(60) NOT NULL REFERENCES '
                                'tenants(email) ON DELETE CASCADE ON UPDATE CASCADE, '
                                'date_sent TIMESTAMP, '
@@ -79,8 +78,7 @@ class SQLModel:
                                        'ON pr.prop_id = tn.prop_id)')
 
     create_doc_tenant_view_command = ('CREATE OR REPLACE VIEW doc_tenant_view AS '
-                                      '(SELECT dc.doc_id AS "Document ID", '
-                                      'tn.prop_id AS "Property ID", '
+                                      '(SELECT tn.prop_id AS "Property ID", '
                                       'tn.first_name AS "First name", '
                                       'tn.last_name AS "Last name", '
                                       'dc.recipient AS "Recipient", '
