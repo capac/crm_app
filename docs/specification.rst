@@ -3,24 +3,26 @@
 ===============================================
 
 Description
------------
+===========
 
 The program is being created to address the issue of documents sent to tenants by emails, for the support of legal disputes.
 
 
 Functionality required
-----------------------
+======================
 
 The program must:
 
 * allow the query of tenant information by property identification
 * create a list of documents sent by email to the tenant
-* allow the printing of the list of documents
+* allow the saving of the list of documents to a file
 * import/export functionality of property / tenant information in database
 * new/edit/delete functionality for property / tenant entries in database
 
 Table entries
--------------
+=============
+
+Property / Tenant view table
 
 +-----------------------------------------------------------+
 | Field       | Datatype  | Description                     |
@@ -43,5 +45,17 @@ Table entries
 +-----------------------------------------------------------+
 | Email       | String    | Email of tenant                 |
 +-----------------------------------------------------------+
-| Documents   | String    | List of documents               |
+
+Document / Tenant view table
+
++-----------------------------------------------------------+
+| Field       | Datatype  | Description                     |
++=============+===========+=================================+
+| Subject     | String    | Subject of email to tenant      |
++-----------------------------------------------------------+
+| Email       | String    | Email of tenant                 |
++-----------------------------------------------------------+
+| Date sent   | ISO Date  | Date email sent to tenant       |
++-----------------------------------------------------------+
+| Document    | String    | List documents attached to email|
 +-----------------------------------------------------------+
