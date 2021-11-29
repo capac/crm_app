@@ -176,8 +176,8 @@ class Application(tk.Tk):
         self.propertyform.columnconfigure(0, weight=1)
 
         # status bar
-        self.status = tk.StringVar()
-        self.statusbar = ttk.Label(self.property_window, textvariable=self.status)
+        self.prop_status = tk.StringVar()
+        self.statusbar = ttk.Label(self.property_window, textvariable=self.prop_status)
         self.statusbar.grid(row=1, padx=10, sticky=('WE'))
         self.statusbar.columnconfigure(0, weight=1)
 
@@ -189,7 +189,7 @@ class Application(tk.Tk):
         if errors:
             message = 'Cannot save record'
             detail = 'The following fields have errors: \n * {}'.format('\n * '.join(errors.keys()))
-            self.status.set(
+            self.prop_status.set(
                 f'''Cannot save, error in fields: {', '.join(errors.keys())}'''
             )
             messagebox.showerror(title='Error', message=message, detail=detail)
@@ -267,25 +267,29 @@ class Application(tk.Tk):
     def populate_documentlist(self):
         '''Opens list of documents sent by email'''
 
-        email = self.recordform.inputs['Email'].get()
+        self.recipient_email = self.recordform.inputs['Email'].get()
+        self.recipient_email = self.recipient_email if self.recipient_email else None
         try:
             # retrieves email(s) from Microsoft Outlook/Office365/Exchange account
-            self.retrieve_emails(email)
-            # populates document list with sent emails from 'docuemnts' table in database
-            rows = self.data_model.get_documents_by_email(email)
+            self.retrieve_emails(self.recipient_email)
         except Exception as e:
             messagebox.showerror(
                 title='Error',
-                message='Problem loading email(s)',
+                message='Problem fetching email(s)',
                 detail=str(e)
             )
-            self.docs_status.set('Problem loading email(s)')
+            self.docs_status.set('Problem fetching email(s)')
         else:
+            # populates document list with sent emails from 'docuemnts' table in database
+            if self.recipient_email:
+                rows = self.data_model.get_documents_by_email(self.recipient_email)
+            else:
+                messagebox.showerror(title='Error',
+                                     message='Please select recipient')
             # status on sent email retrieval
-            sent_email_account = self.settings_model.variables['account_email']['value']
             self.documentform.populate(rows)
             emails_loaded = str(self.documentform.count)
-            retrieved_message = f'''Retrieved emails sent from '{sent_email_account}' to '{email}', '''
+            retrieved_message = f'''Retrieved emails sent from {self.sent_email_account} to {self.recipient_email}, '''
             status_message = f'''{emails_loaded} email(s) listed in this session.'''
             docs_message = f'{retrieved_message}{status_message}'
             self.main_status.set(docs_message)
@@ -333,7 +337,7 @@ class Application(tk.Tk):
                     detail=str(e)
                 )
             else:
-                self.docs_status.set(f'Saved data to \'{self.filename.get()}\'')
+                self.docs_status.set(f'Saved data to {self.filename.get()}')
                 csv_write = m.CSVModel(filename=self.filename.get(), filepath=None)
                 csv_write.save_record(documents_list, csv_write.document_fields.keys())
 
@@ -342,6 +346,13 @@ class Application(tk.Tk):
 
         try:
             sent_docs = n.RetrieveSentDocuments(self.settings)
+            self.sent_email_account = self.settings_model.variables['account_email']['value']
+            messagebox.showinfo(
+                title='Retrieving email(s)',
+                message=f'''Retrieving email(s) sent from {self.sent_email_account}
+                            to {self.recipient_email}.
+                            \n Press button to continue.''',
+            )
             sent_docs.get(tenant_email=email)
         except Exception as e:
             messagebox.showerror(
@@ -380,7 +391,7 @@ class Application(tk.Tk):
                 for row in records:
                     self.data_model.add_property(row)
                     self.data_model.add_tenant(row)
-                self.main_status.set(f'''Loaded data into \'{self.settings['db_name'].get()}\'''')
+                self.main_status.set(f'''Loaded data into {self.settings['db_name'].get()}''')
                 self.populate_recordlist()
 
     # save records to CSV file
@@ -403,7 +414,7 @@ class Application(tk.Tk):
                     detail=str(e)
                 )
             else:
-                self.main_status.set(f'Saved data to \'{self.filename.get()}\'')
+                self.main_status.set(f'Saved data to {self.filename.get()}')
                 csv_write = m.CSVModel(filename=self.filename.get(),
                                        filepath=None)
                 csv_write.save_record(rows, csv_write.fields.keys())
