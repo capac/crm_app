@@ -48,7 +48,6 @@ To start the application, run in the application root directory:
 Issues
 ======
 
-* Sent emails deleted remotely aren't removed locally.
 * Querying of tenant information by property identification still hasn't been implemented.
 * The program first connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so an internet connection is required for the program to work.
 
