@@ -60,6 +60,7 @@ class SQLModel:
                                'recipient VARCHAR(60) NOT NULL REFERENCES '
                                'tenants(email) ON DELETE CASCADE ON UPDATE CASCADE, '
                                'date_sent TIMESTAMP, '
+                               'date_retrieved TIMESTAMP, '
                                'attachments VARCHAR(200), '
                                'PRIMARY KEY(date_sent))')
 
@@ -84,6 +85,7 @@ class SQLModel:
                                       'dc.recipient AS "Recipient", '
                                       'dc.subject AS "Subject", '
                                       'dc.date_sent AS "Date sent", '
+                                      'dc.date_retrieved AS "Date retrieved", '
                                       'dc.attachments AS "Attachments" '
                                       'FROM documents AS dc '
                                       'JOIN tenants AS tn '
@@ -108,8 +110,9 @@ class SQLModel:
 
     # retrieve and insert new emails in documents table
     documents_insert_query = ('INSERT INTO documents (subject, recipient, date_sent, '
-                              'attachments) VALUES (%(Subject)s, %(Recipient)s, '
-                              '%(Date sent)s, %(Attachments)s)')
+                              'date_retrieved, attachments) VALUES (%(Subject)s, '
+                              '%(Recipient)s, %(Date sent)s, CURRENT_TIMESTAMP(0), '
+                              '%(Attachments)s)')
 
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
