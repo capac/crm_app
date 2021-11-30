@@ -487,13 +487,12 @@ class RecordList(tk.Frame):
             self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
                                  values=values, tag=tag)
 
-            # selects automatically the first row,
-            # to make selections keyboard-friendly
-            if len(rows) > 0:
-                firstrow = self.treeview.identify_row(0)
-                self.treeview.focus_set()
-                self.treeview.selection_set(firstrow)
-                self.treeview.focus(firstrow)
+        # selects automatically the first row, to make selections keyboard-friendly
+        if len(rows) > 0:
+            firstrow = self.treeview.identify_row(0)
+            self.treeview.focus_set()
+            self.treeview.selection_set(firstrow)
+            self.treeview.focus(firstrow)
 
 
 class LoginDialog(Dialog):
