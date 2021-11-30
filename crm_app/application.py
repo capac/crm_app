@@ -286,6 +286,7 @@ class Application(tk.Tk):
             else:
                 messagebox.showerror(title='Error',
                                      message='Please select recipient')
+                return
             # status on sent email retrieval
             self.documentform.populate(rows)
             emails_loaded = str(self.documentform.count)
