@@ -115,6 +115,10 @@ class SQLModel:
                               '%(Attachments)s) ON CONFLICT (date_sent) DO UPDATE '
                               'SET date_retrieved = CURRENT_TIMESTAMP(0)')
 
+    remove_old_emails_query = ('DELETE FROM documents WHERE date_retrieved < (SELECT '
+                               'MAX(date_retrieved) FROM documents WHERE recipient = '
+                               '%(Recipient)s) AND recipient = %(Recipient)s')
+
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
 
@@ -201,10 +205,12 @@ class SQLModel:
         property_query = self.propriety_delete_query
         self.query(property_query, record)
 
-    def insert_retrieved_documents(self, record):
-        # insert retrieved emails in documents table
-        documents_query = self.documents_insert_query
-        self.query(documents_query, record)
+    def insert_retrieved_documents(self, email):
+        # insert retrieved email(s) in documents table
+        self.query(self.documents_insert_query, email)
+        # remove email(s) from  documents table that are
+        # no longer present on server
+        self.query(self.remove_old_emails_query, email)
 
     def get_documents_by_email(self, email):
         # retrieves list of documents by email
