@@ -112,7 +112,8 @@ class SQLModel:
     documents_insert_query = ('INSERT INTO documents (subject, recipient, date_sent, '
                               'date_retrieved, attachments) VALUES (%(Subject)s, '
                               '%(Recipient)s, %(Date sent)s, CURRENT_TIMESTAMP(0), '
-                              '%(Attachments)s)')
+                              '%(Attachments)s) ON CONFLICT (date_sent) DO UPDATE '
+                              'SET date_retrieved = CURRENT_TIMESTAMP(0)')
 
     # delete old property, used rarely
     propriety_delete_query = ('DELETE FROM properties WHERE prop_id = %(Property ID)s')
@@ -203,11 +204,7 @@ class SQLModel:
     def insert_retrieved_documents(self, record):
         # insert retrieved emails in documents table
         documents_query = self.documents_insert_query
-        try:
-            self.query(documents_query, record)
-        # email(s) are already present in the database at the date sent
-        except pg.IntegrityError:
-            pass
+        self.query(documents_query, record)
 
     def get_documents_by_email(self, email):
         # retrieves list of documents by email
