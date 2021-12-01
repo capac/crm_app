@@ -116,7 +116,7 @@ class SQLModel:
                               'SET date_retrieved = CURRENT_TIMESTAMP(0)')
 
     remove_old_emails_query = ('DELETE FROM documents WHERE date_retrieved < (SELECT '
-                               'MAX(date_retrieved) FROM documents WHERE recipient = '
+                               'MIN(date_retrieved) FROM documents WHERE recipient = '
                                '%(Recipient)s) AND recipient = %(Recipient)s')
 
     # delete old property, used rarely
