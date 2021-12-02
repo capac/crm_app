@@ -292,9 +292,10 @@ class DocumentList(tk.Frame):
     default_minwidth = 20
     default_anchor = tk.W
 
-    def __init__(self, parent, callbacks, *args, **kwargs):
+    def __init__(self, parent, callbacks, input_var, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.callbacks = callbacks
+        self.input_var = input_var
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
@@ -315,18 +316,23 @@ class DocumentList(tk.Frame):
         self.treeview.grid(row=0, column=0, sticky='NSEW')
         self.scrollbar.grid(row=0, column=1, sticky='NSEW')
 
+        commandinfo = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
+        # add refresh button
+        self.refreshbutton = w.LabelInput(commandinfo, 'Refresh list',
+                                          input_class=ttk.Button,
+                                          input_var=self.callbacks['on_retrieve_emails'])
+        self.refreshbutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
         # add print button
-        commandinfo = tk.LabelFrame(self, text='Command', padx=5, pady=5)
-        self.retrievebutton = w.LabelInput(commandinfo, 'Refresh list',
-                                           input_class=ttk.Button,
-                                           input_var=self.callbacks['on_retrieve_emails'])
-        self.retrievebutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
         self.printbutton = w.LabelInput(commandinfo, 'Save list to file',
                                         input_class=ttk.Button,
                                         input_var=self.callbacks['on_print_list'])
         self.printbutton.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
+        # add checkbutton option for files with/without attachment
+        self.attachmentoption = w.LabelInput(commandinfo, 'Select only email(s) with attachments',
+                                             input_class=ttk.Checkbutton,
+                                             input_var=self.input_var)
+        self.attachmentoption.grid(row=1, column=0, columnspan=2, padx=10, sticky=tk.W)
         commandinfo.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
-        commandinfo.columnconfigure(1, weight=1)
 
         # configure treeview columns
         for name, definition in self.column_defs.items():
