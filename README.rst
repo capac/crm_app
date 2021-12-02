@@ -58,6 +58,6 @@ TODO
 ====
 
 * Currently dark mode on macOS using Python 3.9.x uses inconsistent fonts and backgrounds. A dark theme mode needs to be implemented to mitigate the current setup.
-:strike: * Check button to remove emails with no attachments from the document list
+:strike: `* Check button to remove emails with no attachments from the document list`
 * Bar chart showing tenant occupancy in the properties
 * Bar chart showing number of properties per landlord
