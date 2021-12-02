@@ -1,3 +1,6 @@
+.. role:: strike
+    :class: strike
+
 ==============================================
  Customer Relationship Management Application
 ==============================================
