@@ -54,6 +54,7 @@ Issues
 TODO
 ====
 
+* Allow option to retrieve locally or remotely documents sent by email.
 * Currently dark mode on macOS using Python 3.9.x uses inconsistent fonts and backgrounds. A dark theme mode needs to be implemented to mitigate the current setup.
 * Bar chart showing tenant occupancy in the properties
 * Bar chart showing number of properties per landlord
