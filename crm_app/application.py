@@ -286,7 +286,8 @@ class Application(tk.Tk):
         else:
             # populates document list with sent emails from 'docuemnts' table in database
             if self.recipient_email:
-                rows = self.data_model.get_documents_by_email(self.recipient_email)
+                rows = self.data_model.get_documents_by_email(self.recipient_email,
+                                                              self.attachment_option.get())
             else:
                 messagebox.showerror(title='Error',
                                      message='Please select recipient')
@@ -309,7 +310,9 @@ class Application(tk.Tk):
         self.docs_window.title('Document list')
 
         # document form
-        self.documentform = v.DocumentList(self.docs_window, self.callbacks)
+        self.attachment_option = tk.BooleanVar()
+        self.documentform = v.DocumentList(self.docs_window, self.callbacks,
+                                           self.attachment_option)
         self.documentform.grid(row=0, padx=5, sticky='NSEW')
 
         # status bar
