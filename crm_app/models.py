@@ -212,11 +212,16 @@ class SQLModel:
         # no longer present on server
         self.query(self.remove_old_emails_query, email)
 
-    def get_documents_by_email(self, email):
+    def get_documents_by_email(self, email, attachments):
         # retrieves list of documents by email
-        query = ('SELECT * FROM doc_tenant_view WHERE "Recipient" = %(email)s '
-                 'ORDER BY "Date sent"')
-        results = self.query(query, {"email": email})
+        if attachments:
+            query = ('SELECT * FROM doc_tenant_view WHERE "Recipient" = %(email)s '
+                     'AND "Attachments" IS NOT NULL ORDER BY "Date sent"')
+            results = self.query(query, {"email": email, 'attachments': attachments})
+        else:
+            query = ('SELECT * FROM doc_tenant_view WHERE "Recipient" = %(email)s '
+                     'ORDER BY "Date sent"')
+            results = self.query(query, {"email": email})
         return results if results else {}
 
 
