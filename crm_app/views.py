@@ -286,7 +286,8 @@ class DocumentList(tk.Frame):
         'Subject': {'label': 'Subject', 'width': 400},
         'Recipient': {'label': 'Recipient', 'width': 220},
         'Date sent': {'label': 'Date sent', 'width': 180},
-        'Attachments': {'label': 'Attachments', 'width': 400},
+        'Date retrieved': {'label': 'Date retrieved', 'width': 180},
+        'Attachments': {'label': 'Attachments', 'width': 260},
     }
     default_width = 100
     default_minwidth = 20
@@ -322,16 +323,16 @@ class DocumentList(tk.Frame):
                                           input_class=ttk.Button,
                                           input_var=self.callbacks['on_retrieve_emails'])
         self.refreshbutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
-        # add print button
-        self.printbutton = w.LabelInput(commandinfo, 'Save list to file',
-                                        input_class=ttk.Button,
-                                        input_var=self.callbacks['on_print_list'])
-        self.printbutton.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
         # add checkbutton option for files with/without attachment
         self.attachmentoption = w.LabelInput(commandinfo, 'Select only email(s) with attachments',
                                              input_class=ttk.Checkbutton,
                                              input_var=self.input_var)
-        self.attachmentoption.grid(row=1, column=0, columnspan=2, padx=10, sticky=tk.W)
+        self.attachmentoption.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
+        # add print button
+        self.printbutton = w.LabelInput(commandinfo, 'Save list to file',
+                                        input_class=ttk.Button,
+                                        input_var=self.callbacks['on_print_list'])
+        self.printbutton.grid(row=0, column=2, padx=10, pady=(10, 0), sticky=tk.E)
         commandinfo.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
 
         # configure treeview columns
@@ -362,9 +363,10 @@ class DocumentList(tk.Frame):
             att = rowdata['Attachments']
             split_attachments = att[1:-1].split(',') if isinstance(att, str) else None
             rowkey = (str(rowdata['Subject']), str(rowdata['Recipient']),
-                      str(rowdata['Date sent']), str(rowdata['Attachments']))
+                      str(rowdata['Date sent']), str(rowdata['Date retrieved']),
+                      str(rowdata['Attachments']))
             values = [rowdata[key] for key in valuekeys]
-            stringkey = '{}|{}|{}|{}'.format(*rowkey)
+            stringkey = '{}|{}|{}|{}|{}'.format(*rowkey)
             if split_attachments is None:
                 self.treeview.insert('', 'end', iid=stringkey, text=stringkey, values=values)
                 row_count += 1
