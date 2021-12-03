@@ -51,9 +51,11 @@ Issues
 * Querying of tenant information by property identification still hasn't been implemented.
 * The program first connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so an internet connection is required for the program to work.
 
-TODO
-====
+Todo
+=====
 
+* Add 'Retrieved date' in documents window.
+* Use a dropdown menu at 'Property ID' to search for properties in main window.
 * Allow option to retrieve locally or remotely documents sent by email.
 * Currently dark mode on macOS using Python 3.9.x uses inconsistent fonts and backgrounds. A dark theme mode needs to be implemented to mitigate the current setup.
 * Bar chart showing tenant occupancy in the properties
