@@ -37,7 +37,7 @@ In order for the O365 package to work, you will need to follow the instructions 
 
 Personal settings, such as the Microsoft account email, application client ID and client secret are saved in the 'settings.json file', which is created the first time the program is run and is located differently according to the platform: `"~/Library/Application Support/CRMApp"` for macOS and `"~/AppData/Local/CRMApp"` for Windows. Edit the file to add your personal settings.
 
-If it's your first login to your account, you will have to visit a Microsoft authentication website to authenticate after which you need to paste the redirected URL in the console. At that point, your token will be stored. If you already have a valid stored token, then the account is already considered authenticated and further operations can proceed. As long as the token isn't older than 90 days, you won't need to go through the console authentication again.
+If it's your first login to your account, you will have to visit a Microsoft authentication website after which you need to paste the redirected URL into the terminal to have access to your email, and at that point your token will be stored. If you already have a valid token, then the account is already considered authenticated and further operations can proceed. As long as the token isn't older than 90 days, you won't need to go through the terminal authentication procedure again.
 
 Usage
 =====
@@ -48,8 +48,7 @@ To start the application, run in the application root directory:
 Issues
 ======
 
-* Querying of tenant information by property identification still hasn't been implemented.
-* The program first connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so an internet connection is required for the program to work if not the program halts with an error message.
+* The program first connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so an internet connection is required for the program to work if not it halts with an error message.
 
 To do
 =====
