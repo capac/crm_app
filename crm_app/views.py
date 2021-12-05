@@ -61,9 +61,10 @@ class MainMenu(tk.Menu):
 class DataRecordForm(tk.Frame):
     '''The record form for our widgets'''
 
-    def __init__(self, parent, fields, callbacks, *args, **kwargs):
+    def __init__(self, parent, fields, callbacks, input_var, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.callbacks = callbacks
+        self.input_var = input_var
 
         # a dictionary to keep track of input widgets
         self.inputs = {}
@@ -127,6 +128,11 @@ class DataRecordForm(tk.Frame):
                                             input_class=ttk.Button,
                                             input_var=self.callbacks['on_show_documents'])
         self.documentsbutton.grid(row=0, column=1, padx=10, pady=(10, 0))
+        # add checkbutton option for files with/without attachment
+        self.attachmentoption = w.LabelInput(command_section, 'Select only email(s) with attachments',
+                                             input_class=ttk.Checkbutton,
+                                             input_var=self.input_var)
+        self.attachmentoption.grid(row=0, column=2, padx=10, pady=(10, 0), sticky=tk.W)
         command_section.grid(row=4, column=0, sticky=(tk.W + tk.E))
 
     def get(self):
@@ -318,21 +324,21 @@ class DocumentList(tk.Frame):
         self.scrollbar.grid(row=0, column=1, sticky='NSEW')
 
         commandinfo = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
-        # add refresh button
-        self.refreshbutton = w.LabelInput(commandinfo, 'Refresh list',
-                                          input_class=ttk.Button,
-                                          input_var=self.callbacks['on_retrieve_emails'])
-        self.refreshbutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.W)
-        # add checkbutton option for files with/without attachment
-        self.attachmentoption = w.LabelInput(commandinfo, 'Select only email(s) with attachments',
-                                             input_class=ttk.Checkbutton,
-                                             input_var=self.input_var)
-        self.attachmentoption.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
         # add print button
         self.printbutton = w.LabelInput(commandinfo, 'Save list to file',
                                         input_class=ttk.Button,
                                         input_var=self.callbacks['on_print_list'])
-        self.printbutton.grid(row=0, column=2, padx=10, pady=(10, 0), sticky=tk.E)
+        self.printbutton.grid(row=0, column=0, padx=10, pady=(10, 0), sticky=tk.E)
+        # add refresh button
+        self.refreshbutton = w.LabelInput(commandinfo, 'Retrieve remote emails',
+                                          input_class=ttk.Button,
+                                          input_var=self.callbacks['on_retrieve_emails'])
+        self.refreshbutton.grid(row=0, column=1, padx=10, pady=(10, 0), sticky=tk.W)
+        # add checkbutton option for files with/without attachment
+        self.attachmentoption = w.LabelInput(commandinfo, 'Select only email(s) with attachments',
+                                             input_class=ttk.Checkbutton,
+                                             input_var=self.input_var)
+        self.attachmentoption.grid(row=0, column=2, padx=10, pady=(10, 0), sticky=tk.W)
         commandinfo.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
 
         # configure treeview columns
