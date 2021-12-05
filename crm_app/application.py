@@ -64,7 +64,7 @@ class Application(tk.Tk):
             'on_delete_property': self.delete_property,
             'on_open_record': self.open_record,
             'on_show_documents': self.show_documents,
-            'on_retrieve_emails': self.populate_documentlist,
+            'on_retrieve_emails': self.retrieve_remote_emails,
             'on_print_list': self.print_list,
         }
 
@@ -82,9 +82,12 @@ class Application(tk.Tk):
         self.recordlist.columnconfigure(0, weight=1)
         self.populate_recordlist()
 
+        # attachment option for data form anf document list
+        self.attachment_option = tk.BooleanVar()
+
         # data record form
         self.recordform = v.DataRecordForm(self, self.data_model.fields,
-                                           self.callbacks)
+                                           self.callbacks, self.attachment_option)
         self.recordform.grid(row=2, padx=10, sticky='NSEW')
         self.recordform.columnconfigure(0, weight=1)
 
@@ -268,38 +271,56 @@ class Application(tk.Tk):
             self.populate_recordlist()
             self.delete_window.destroy()
 
+    def retrieve_remote_emails(self):
+        '''Retrieve emails from remote Microsoft server'''
+
+        self.retrieve_emails(self.recipient_email)
+        rows = self.data_model.get_documents_by_email(self.recipient_email,
+                                                      self.attachment_option.get())
+        self.documentform.populate(rows)
+
     def populate_documentlist(self):
-        '''Opens list of documents sent by email'''
+        '''Opens list of documents sent by email, first from local database,
+           else it retrieves the emails from Microsoft Outlook / Office365 /
+           Exchange account.
+        '''
 
         self.recipient_email = self.recordform.inputs['Email'].get()
         self.recipient_email = self.recipient_email if self.recipient_email else None
-        try:
-            # retrieves email(s) from Microsoft Outlook/Office365/Exchange account
-            self.retrieve_emails(self.recipient_email)
-        except Exception as e:
+
+        # Microsoft Outlook/Office365/Exchange account email
+        self.sent_email_account = self.settings_model.variables['account_email']['value']
+
+        # populates document list with sent emails from 'docuemnts' table in database
+        if self.recipient_email:
+            rows = self.data_model.get_documents_by_email(self.recipient_email,
+                                                          self.attachment_option.get())
+        else:
             messagebox.showerror(
                 title='Error',
-                message='Problem fetching email(s)',
-                detail=str(e)
-            )
-            self.docs_status.set('Problem fetching email(s)')
-        else:
-            # populates document list with sent emails from 'docuemnts' table in database
-            if self.recipient_email:
-                rows = self.data_model.get_documents_by_email(self.recipient_email,
-                                                              self.attachment_option.get())
-            else:
-                messagebox.showerror(title='Error',
-                                     message='Please select recipient')
-                return
-            # status on sent email retrieval
+                message='Please select recipient')
+            return
+        if rows:
             self.documentform.populate(rows)
-            emails_loaded = str(self.documentform.count)
-            retrieved_message = f'''Retrieved emails sent from {self.sent_email_account} to {self.recipient_email}, '''
-            status_message = f'''{emails_loaded} email(s) listed in this session.'''
-            docs_message = f'{retrieved_message}{status_message}'
-            self.main_status.set(docs_message)
-            self.docs_status.set(docs_message)
+        else:
+            try:
+                # retrieves email(s) from Microsoft Outlook/Office365/Exchange account
+                self.retrieve_remote_emails()
+            except Exception as e:
+                messagebox.showerror(
+                    title='Error',
+                    message='Problem fetching email(s)',
+                    detail=str(e)
+                )
+                self.docs_status.set('Problem fetching email(s)')
+
+        # status on sent email retrieval
+        emails_loaded = str(self.documentform.count)
+        retrieved_message = f'''Retrieved emails sent from {self.sent_email_account} to {self.recipient_email}, '''
+        status_message = f'''{emails_loaded} email(s) listed in this session.'''
+        docs_message = f'{retrieved_message}{status_message}'
+        self.main_status.set(docs_message)
+        self.docs_status.set(docs_message)
 
     def show_documents(self):
         '''Opens window showing list of documents to tenants'''
@@ -310,7 +331,6 @@ class Application(tk.Tk):
         self.docs_window.title('Document list')
 
         # document form
-        self.attachment_option = tk.BooleanVar()
         self.documentform = v.DocumentList(self.docs_window, self.callbacks,
                                            self.attachment_option)
         self.documentform.grid(row=0, padx=5, sticky='NSEW')
@@ -354,7 +374,6 @@ class Application(tk.Tk):
 
         try:
             sent_docs = n.RetrieveSentDocuments(self.settings)
-            self.sent_email_account = self.settings_model.variables['account_email']['value']
             messagebox.showinfo(
                 title='Retrieving email(s)',
                 message=f'''Retrieving email(s) sent from {self.sent_email_account}
