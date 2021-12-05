@@ -48,7 +48,7 @@ To start the application, run in the application root directory:
 Issues
 ======
 
-* The program first connects to the user's Microsoft Outlook/Exchange/Office 365 account to retrieve the sent emails, and so an internet connection is required for the program to work if not it halts with an error message.
+* An internet connection is required for the program to work if not it halts with an error message.
 
 * Currently dark mode on macOS using Python 3.9.x uses inconsistent fonts and backgrounds. A dark theme mode needs to be implemented to fix the current issues. This may be solved by installing more themes, such as thoses in ttkthemes (currently at version 3.3.2). To install run 'python -m pip install ttkthemes'.
 
@@ -57,5 +57,5 @@ To do
 
 * Allow option to retrieve locally or remotely documents sent by email.
 * Use a dropdown menu at 'Property ID' to search for properties in main window.
-* Bar chart showing number of properties per landlord
-* Bar chart showing tenant occupancy in the properties
+* Bar chart showing number of properties per landlord.
+* Bar chart showing tenant occupancy in the properties.
