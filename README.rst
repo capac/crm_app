@@ -57,5 +57,4 @@ To do
 
 * Allow option to retrieve locally or remotely documents sent by email.
 * Use a dropdown menu at 'Property ID' to search for properties in main window.
-* Bar chart showing number of properties per landlord.
 * Bar chart showing tenant occupancy in the properties.
