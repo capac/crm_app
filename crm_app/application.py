@@ -66,6 +66,7 @@ class Application(tk.Tk):
             'on_show_documents': self.show_documents,
             'on_retrieve_emails': self.retrieve_remote_emails,
             'on_print_list': self.print_list,
+            'show_occupancy_by_landlord': self.show_occupancy_by_landlord
         }
 
         menu = v.MainMenu(self, self.callbacks)
@@ -445,6 +446,17 @@ class Application(tk.Tk):
                 csv_write = m.CSVModel(filename=self.filename.get(),
                                        filepath=None)
                 csv_write.save_record(rows, csv_write.fields.keys())
+
+    def show_occupancy_by_landlord(self):
+        popup = tk.Toplevel()
+        bar_chart = v.BarChartView(popup,
+                                   "Landlord",
+                                   "Number of properties",
+                                   "Number of properties by landlord")
+        bar_chart.pack(fill='both', expand=True)
+        data = self.data_model.get_properties_by_landlord()
+        colors = ['orchid', 'gold', 'limegreen', 'dodgerblue']
+        bar_chart.draw_bar_chart(data, colors)
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
