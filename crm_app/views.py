@@ -3,6 +3,14 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter.simpledialog import Dialog
 from . import widgets as w
+# matplotlib
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk
+)
+from matplotlib import use, pyplot
+use('TkAgg')
+pyplot.style.use('ggplot')
 
 
 class MainMenu(tk.Menu):
@@ -42,6 +50,12 @@ class MainMenu(tk.Menu):
             command=callbacks['file->export']
             )
         self.add_cascade(label='File', menu=file_menu)
+        file_menu.add_separator()
+        file_menu.add_command(
+            # 8230: ASCII value for horizontal ellipsis
+            label='Show statistics'+chr(8230),
+            command=callbacks['show_occupancy_by_landlord']
+            )
 
         # the help menu
         help_menu = tk.Menu(self, tearoff=False)
@@ -507,6 +521,28 @@ class RecordList(tk.Frame):
             self.treeview.focus_set()
             self.treeview.selection_set(firstrow)
             self.treeview.focus(firstrow)
+
+
+class BarChartView(tk.Frame):
+    '''Graphical plots showing some statistics on occupancy'''
+
+    def __init__(self, parent, x_axis, y_axis, title):
+        super().__init__(parent)
+        self.figure = Figure(figsize=(8, 6), dpi=100, layout='tight')
+        self.canvas = FigureCanvasTkAgg(self.figure, master=self)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.canvas.get_tk_widget().pack(fill='both', expand=True)
+        # axes
+        self.axes = self.figure.add_subplot(1, 1, 1)
+        self.axes.set_xlabel(x_axis, fontsize=14)
+        self.axes.set_ylabel(y_axis, fontsize=14)
+        self.axes.set_title(title, fontsize=16)
+
+    def draw_bar_chart(self, data, colors):
+        labels, values = zip(*data)
+        self.bar = self.axes.bar(labels, values, color=colors,
+                                 label=labels, alpha=0.6)
+        self.axes.legend(self.bar, labels)
 
 
 class LoginDialog(Dialog):
