@@ -54,7 +54,7 @@ class MainMenu(tk.Menu):
         file_menu.add_command(
             # 8230: ASCII value for horizontal ellipsis
             label='Show statistics'+chr(8230),
-            command=callbacks['show_occupancy_by_landlord']
+            command=callbacks['on_show_occupancy_by_landlord']
             )
 
         # the help menu

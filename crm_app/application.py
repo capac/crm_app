@@ -66,7 +66,7 @@ class Application(tk.Tk):
             'on_show_documents': self.show_documents,
             'on_retrieve_emails': self.retrieve_remote_emails,
             'on_print_list': self.print_list,
-            'show_occupancy_by_landlord': self.show_occupancy_by_landlord
+            'on_show_occupancy_by_landlord': self.show_occupancy_by_landlord
         }
 
         menu = v.MainMenu(self, self.callbacks)
