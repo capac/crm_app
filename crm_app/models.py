@@ -224,6 +224,12 @@ class SQLModel:
             results = self.query(query, {"email": email})
         return results if results else {}
 
+    def get_properties_by_landlord(self):
+        query = ('SELECT "Landlord ID" AS "Landlord", COUNT("Property ID") '
+                 'AS "Number of properties" FROM prop_tenant_view '
+                 'GROUP BY "Landlord ID"')
+        return self.query(query)
+
 
 class CSVModel:
     '''CSV file retrieval and storage'''
