@@ -28,7 +28,8 @@ Requirements
 * Tkinter (normally part of the built-in packages in Python, however if installing Python 3.9.x and above with Homebrew you may need to install it separately ('brew install python-tk@3.9')),
 * psycopg2 (>=2.8.6), install with 'python -m pip install psycopg2' or 'conda install psycopg2',
 * PostgreSQL (>=13.4), install with 'brew install postgresql@13',
-* O365 (>=2.0.16), install with 'python -m pip install O365'.
+* O365 (>=2.0.16), install with 'python -m pip install O365',
+* matplotlib (>=3.5.x), install with 'python -m pip install matplotlib'.
 
 Configuration
 =============
