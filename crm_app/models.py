@@ -14,8 +14,10 @@ class SQLModel:
         'Property ID Dropdown': {'req': True, 'type': FT.string_list, 'values': []},
         # these values are populated by the lookup tables:
         # landlords
-        'Landlord ID': {'req': True, 'type': FT.string},
         'Property ID': {'req': True, 'type': FT.string},
+        'Landlord ID': {'req': True, 'type': FT.string},
+        'Number properties in building': {'req': True, 'type': FT.string},
+        'Number properties in building Spinbox': {'req': True, 'type': FT.integer},
         # properties
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
@@ -41,6 +43,7 @@ class SQLModel:
                                '(prop_id VARCHAR(7) UNIQUE NOT NULL, '
                                'll_id VARCHAR(6) NOT NULL REFERENCES '
                                'landlords(ll_id) ON DELETE CASCADE ON UPDATE CASCADE, '
+                               'num_prop_building INT NOT NULL, '
                                'flat_num VARCHAR(3) NOT NULL, '
                                'street VARCHAR(60) NOT NULL, '
                                'post_code VARCHAR(10) NOT NULL, '
@@ -67,6 +70,7 @@ class SQLModel:
     create_prop_tenant_view_command = ('CREATE OR REPLACE VIEW prop_tenant_view AS '
                                        '(SELECT pr.prop_id AS "Property ID", '
                                        'pr.ll_id AS "Landlord ID", '
+                                       'pr.num_prop_building AS "Number properties in building", '
                                        'pr.flat_num AS "Flat number", '
                                        'pr.street AS "Street", '
                                        'pr.post_code AS "Post code", '
@@ -102,8 +106,8 @@ class SQLModel:
 
     # insert new property, used rarely
     propriety_insert_query = ('INSERT INTO properties VALUES (%(Property ID)s, '
-                              '%(Landlord ID)s, %(Flat number)s, %(Street)s, '
-                              '%(Post code)s, %(City)s)')
+                              '%(Landlord ID)s, %(Number properties in building)s, '
+                              '%(Flat number)s, %(Street)s, %(Post code)s, %(City)s)')
 
     # insert new landlord, used only on initial CRM app setup
     landlords_insert_query = ('INSERT INTO landlords (ll_id) VALUES (%(Landlord ID)s)')
@@ -237,6 +241,7 @@ class CSVModel:
     fields = {
         'Property ID': {'req': True, 'type': FT.string},
         'Landlord ID': {'req': True, 'type': FT.string},
+        'Number properties in building': {'req': True, 'type': FT.integer},
         'Flat number': {'req': True, 'type': FT.string},
         'Street': {'req': True, 'type': FT.string},
         'Post code': {'req': True, 'type': FT.string},
