@@ -51,10 +51,15 @@ class MainMenu(tk.Menu):
             )
         self.add_cascade(label='File', menu=file_menu)
         file_menu.add_separator()
-        file_menu.add_command(
-            # 8230: ASCII value for horizontal ellipsis
-            label='Show statistics'+chr(8230),
-            command=callbacks['on_show_occupancy_by_landlord']
+        stats_menu = tk.Menu(file_menu, tearoff=False)
+        file_menu.add_cascade(label='Show statistics', menu=stats_menu)
+        stats_menu.add_command(
+            label='Show number of properties by landlord',
+            command=callbacks['on_show_number_of_properties_by_landlord']
+            )
+        stats_menu.add_command(
+            label='Show occupancy in buildings',
+            command=callbacks['on_show_occupancy_in_buildings']
             )
 
         # the help menu
