@@ -133,7 +133,7 @@ class ValidatedCombobox(ValidatedMixin, ttk.Combobox):
 
 class ValidatedSpinbox(ValidatedMixin, TtkSpinbox):
     def __init__(self, *args, min_var=None, max_var=None,
-                 focus_update_var=None, from_='-Infinity', to='Infinity',
+                 focus_update_var=None, from_='1', to='100',
                  **kwargs):
         super().__init__(*args, from_=from_, to=to, **kwargs)
         self.resolution = Decimal(str(kwargs.get('increment', '1.0')))
