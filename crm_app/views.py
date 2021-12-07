@@ -59,7 +59,7 @@ class MainMenu(tk.Menu):
             )
         stats_menu.add_command(
             label='Show occupancy in buildings',
-            command=callbacks['on_show_occupancy_in_buildings']
+            command=callbacks['on_show_occupancy_in_properties']
             )
 
         # the help menu
@@ -102,6 +102,10 @@ class DataRecordForm(tk.Frame):
         self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
                                                   field_spec=fields['Landlord ID'])
         self.inputs['Landlord ID'].grid(row=0, column=1)
+        self.inputs['Number properties in building'] = \
+            w.LabelInput(officeinfo, 'Number of properties in building',
+                         field_spec=fields['Number properties in building'])
+        self.inputs['Number properties in building'].grid(row=0, column=2)
         officeinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # property information
@@ -203,6 +207,10 @@ class AddPropertyForm(tk.Frame):
         self.inputs['Landlord ID'] = w.LabelInput(officeinfo, 'Landlord ID',
                                                   field_spec=fields['Landlord ID'])
         self.inputs['Landlord ID'].grid(row=0, column=1)
+        self.inputs['Number properties in building'] = \
+            w.LabelInput(officeinfo, 'Number of properties in building',
+                         field_spec=fields['Number properties in building Spinbox'])
+        self.inputs['Number properties in building'].grid(row=0, column=2)
         officeinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # property information
@@ -425,14 +433,16 @@ class RecordList(tk.Frame):
     column_defs = {
         '#0': {'label': 'Row', 'anchor': tk.W},
         'Property ID': {'label': 'Property ID', 'anchor': tk.CENTER, 'width': 80},
-        'Landlord ID': {'label': 'Landlord ID', 'anchor': tk.CENTER, 'width': 60},
-        'Flat number': {'label': 'Flat number', 'width': 80},
-        'Street': {'label': 'Street', 'width': 180},
-        'Post code': {'label': 'Post code', 'anchor': tk.CENTER, 'width': 80},
+        'Landlord ID': {'label': 'Landlord ID', 'anchor': tk.CENTER, 'width': 70},
+        'Number properties in building': {'label': 'Number properties in building',
+                                          'width': 175, 'anchor': tk.E},
+        'Flat number': {'label': 'Flat number', 'width': 80, 'anchor': tk.E},
+        'Street': {'label': 'Street', 'width': 175},
+        'Post code': {'label': 'Post code', 'width': 80},
         'City': {'label': 'City', 'width': 80},
-        'First name': {'label': 'First name', 'width': 110},
+        'First name': {'label': 'First name', 'width': 115},
         'Last name': {'label': 'Last name', 'width': 110},
-        'Email': {'label': 'Email', 'width': 230},
+        'Email': {'label': 'Email', 'width': 225},
     }
     default_width = 100
     default_minwidth = 20
@@ -502,7 +512,9 @@ class RecordList(tk.Frame):
         valuekeys = list(self.column_defs.keys())[1:]
         for rowdata in rows:
             rowkey_pr = (str(rowdata['Property ID']), str(rowdata['Landlord ID']),
-                         str(rowdata['Flat number']), str(rowdata['Street']),
+                         str(rowdata['Number properties in building']),
+                         str(rowdata['Flat number']),
+                         str(rowdata['Street']),
                          str(rowdata['Post code']), str(rowdata['City']))
             rowkey_tn = (str(rowdata['Property ID']), str(rowdata['First name']),
                          str(rowdata['Last name']), str(rowdata['Email']))
@@ -516,7 +528,7 @@ class RecordList(tk.Frame):
                 tag = 'inserted_property'
             else:
                 tag = ''
-            stringkey = '{}|{}|{}|{}|{}|{}|{}|{}|{}'.format(*rowkey)
+            stringkey = '{}|{}|{}|{}|{}|{}|{}|{}|{}|{}'.format(*rowkey)
             self.treeview.insert('', 'end', iid=stringkey, text=stringkey,
                                  values=values, tag=tag)
 
