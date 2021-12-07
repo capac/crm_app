@@ -66,7 +66,8 @@ class Application(tk.Tk):
             'on_show_documents': self.show_documents,
             'on_retrieve_emails': self.retrieve_remote_emails,
             'on_print_list': self.print_list,
-            'on_show_occupancy_by_landlord': self.show_occupancy_by_landlord
+            'on_show_number_of_properties_by_landlord': self.show_number_of_properties_by_landlord,
+            'on_show_occupancy_in_properties': self.show_occupancy_in_properties,
         }
 
         menu = v.MainMenu(self, self.callbacks)
@@ -83,7 +84,7 @@ class Application(tk.Tk):
         self.recordlist.columnconfigure(0, weight=1)
         self.populate_recordlist()
 
-        # attachment option for data form anf document list
+        # attachment option for data form and document list
         self.attachment_option = tk.BooleanVar()
 
         # data record form
@@ -447,7 +448,7 @@ class Application(tk.Tk):
                                        filepath=None)
                 csv_write.save_record(rows, csv_write.fields.keys())
 
-    def show_occupancy_by_landlord(self):
+    def show_number_of_properties_by_landlord(self):
         popup = tk.Toplevel()
         bar_chart = v.BarChartView(popup,
                                    "Landlord",
@@ -457,6 +458,9 @@ class Application(tk.Tk):
         data = self.data_model.get_properties_by_landlord()
         colors = ['orchid', 'gold', 'limegreen', 'dodgerblue']
         bar_chart.draw_bar_chart(data, colors)
+
+    def show_occupancy_in_properties(self):
+        pass
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
