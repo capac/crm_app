@@ -56,8 +56,7 @@ Issues
 To do
 =====
 
-* Bar chart showing tenant occupancy in the building properties.
 * Gracefully halt retrieval of remote emails if internet connection isn't avaiable.
 * Add unitesting for code checking
-* Add a log parser and file for debugging purposes
+* Add a log parser and log file for debugging purposes
 * Use a dropdown menu at 'Property ID' to search for properties in main window.
