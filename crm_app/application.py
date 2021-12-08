@@ -456,11 +456,17 @@ class Application(tk.Tk):
                                    "Number of properties by landlord")
         bar_chart.pack(fill='both', expand=True)
         data = self.data_model.get_properties_by_landlord()
-        colors = ['orchid', 'gold', 'limegreen', 'dodgerblue']
-        bar_chart.draw_bar_chart(data, colors)
+        bar_chart.draw_bar_chart(data)
 
     def show_occupancy_in_properties(self):
-        pass
+        popup = tk.Toplevel()
+        bar_chart = v.BarChartView(popup,
+                                   "Street",
+                                   "Number of properties",
+                                   "Occupancy")
+        bar_chart.pack(fill='both', expand=True)
+        data = self.data_model.get_occupancy_by_building()
+        bar_chart.draw_bar_chart(data)
 
     def load_settings(self):
         '''Load settings into our self.settings dict'''
