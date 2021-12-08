@@ -5,12 +5,10 @@ from tkinter.simpledialog import Dialog
 from . import widgets as w
 # matplotlib
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk
-)
-from matplotlib import use, pyplot
-use('TkAgg')
-pyplot.style.use('ggplot')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib import use as mpl_use, pyplot as plt
+mpl_use('TkAgg')
+plt.style.use('ggplot')
 
 
 class MainMenu(tk.Menu):
@@ -555,11 +553,21 @@ class BarChartView(tk.Frame):
         self.axes.set_ylabel(y_axis, fontsize=14)
         self.axes.set_title(title, fontsize=16)
 
-    def draw_bar_chart(self, data, colors):
-        labels, values = zip(*data)
-        self.bar = self.axes.bar(labels, values, color=colors,
-                                 label=labels, alpha=0.6)
+    def draw_bar_chart(self, data):
+        labels, prime_values, *secondary_values = zip(*data)
+        self.bar = self.axes.bar(labels, prime_values, color=plt.cm.Paired.colors,
+                                 edgecolor='k', label=labels, alpha=0.8)
         self.axes.legend(self.bar, labels)
+        if secondary_values:
+            self.bar = self.axes.bar(labels, secondary_values[0], bottom=prime_values,
+                                     color=plt.cm.Paired.colors, edgecolor='k',
+                                     label=labels, alpha=0.4)
+            self.axes.legend(self.bar, [])
+            self.axes.set_ylim([0, 22])
+        plt.setp(self.axes.get_xticklabels(), ha="right",
+                 rotation_mode="anchor",
+                 rotation=45, fontsize=14)
+        plt.setp(self.axes.get_yticklabels(), fontsize=14)
 
 
 class LoginDialog(Dialog):
