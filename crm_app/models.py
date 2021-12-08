@@ -234,6 +234,13 @@ class SQLModel:
                  'GROUP BY "Landlord ID"')
         return self.query(query)
 
+    def get_occupancy_by_building(self):
+        query = ('SELECT "Street", COUNT("Street") AS "Number of occupied properties", '
+                 'MIN("Number properties in building") AS "Total properties", '
+                 '100*ROUND(CAST(COUNT("Street") AS DECIMAL)/MIN("Number properties '
+                 'in building"), 2) AS "Occupancy (%)" FROM prop_tenant_view GROUP BY "Street"')
+        return self.query(query)
+
 
 class CSVModel:
     '''CSV file retrieval and storage'''
