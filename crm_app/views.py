@@ -563,7 +563,13 @@ class BarChartView(tk.Frame):
                                      color=plt.cm.Paired.colors, edgecolor='k',
                                      label=labels, alpha=0.4)
             self.axes.legend(self.bar, [])
-            self.axes.set_ylim([0, 22])
+            text_loc = float(self.axes.yaxis.get_data_interval()[1])
+            self.axes.set_ylim([0, text_loc+3])
+            # annotate labels
+            occupancy_values = [int(x) for x in secondary_values[1]]
+            for x, y in zip(labels, occupancy_values):
+                self.axes.annotate('{0:d}%'.format(y), xy=(x, text_loc+1.5),
+                                   ha='center', size=12, color='k')
         plt.setp(self.axes.get_xticklabels(), ha="right",
                  rotation_mode="anchor",
                  rotation=45, fontsize=14)
