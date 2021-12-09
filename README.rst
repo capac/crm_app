@@ -43,13 +43,13 @@ If it's your first login to your account, you will have to visit a Microsoft aut
 Usage
 =====
 
-To start the application, run in the application root directory:
+To start the application, run from the application root directory the following command at the prompt:
 > python crm_app/crm_app.py
 
 Issues
 ======
 
-* An internet connection is required for the program to work if not it halts with an error message.
+* An internet connection is required for the program to work, if not it halts with an error message.
 
 * Currently dark mode on macOS using Python 3.9.x uses inconsistent fonts and backgrounds. A dark theme mode needs to be implemented to fix the current issues. This may be solved by installing more themes, such as thoses in ttkthemes (currently at version 3.3.2). To install run 'python -m pip install ttkthemes'.
 
