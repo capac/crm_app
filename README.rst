@@ -56,6 +56,7 @@ Issues
 To do
 =====
 
+* Make sure on first run that PostgreSQL user and database are created without issue.
 * Gracefully halt retrieval of remote emails if internet connection isn't avaiable.
 * Add unitesting for code checking
 * Add a log parser and log file for debugging purposes
