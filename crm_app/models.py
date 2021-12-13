@@ -1,6 +1,7 @@
 import csv
 import os
 import json
+import subprocess
 from .constants import FieldTypes as FT
 import psycopg2 as pg
 from psycopg2.extras import DictCursor
@@ -29,10 +30,9 @@ class SQLModel:
         'Email': {'req': True, 'type': FT.string},
     }
 
-    # create database if not existing
-    create_database_command = ('''SELECT 'CREATE DATABASE housing_management' WHERE NOT EXISTS '''
-                               '''(SELECT FROM pg_database WHERE datname = '''
-                               ''''housing_management')''')
+    # create user and database if not existing
+    subprocess.run('createuser -s crm', shell=True, stderr=subprocess.DEVNULL)
+    subprocess.run('createdb -O crm housing_management', shell=True, stderr=subprocess.DEVNULL)
 
     # create tables if not existing
     create_ll_table_command = ('CREATE TABLE IF NOT EXISTS landlords '
@@ -146,7 +146,6 @@ class SQLModel:
     def create_db_and_tables(self):
         '''Creates database and tables if they don't already exist'''
 
-        self.query(self.create_database_command)
         self.query(self.create_ll_table_command)
         self.query(self.create_pr_table_command)
         self.query(self.create_tn_table_command)
