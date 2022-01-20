@@ -4,6 +4,7 @@ from tkinter import messagebox
 from tkinter.simpledialog import Dialog
 from . import widgets as w
 # matplotlib
+import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib import use as mpl_use, pyplot as plt
@@ -559,7 +560,8 @@ class BarChartView(tk.Frame):
                                  edgecolor='k', label=labels, alpha=0.8)
         self.axes.legend(self.bar, labels)
         if secondary_values:
-            self.bar = self.axes.bar(labels, secondary_values[0], bottom=prime_values,
+            top_values = np.array(secondary_values[0])-np.array(prime_values)
+            self.bar = self.axes.bar(labels, top_values, bottom=prime_values,
                                      color=plt.cm.Paired.colors, edgecolor='k',
                                      label=labels, alpha=0.4)
             self.axes.legend(self.bar, [])
