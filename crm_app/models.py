@@ -171,9 +171,7 @@ class SQLModel:
     def add_tenant(self, record):
         # add or update tenant information
         prop_id = record['Property ID']
-        query = ('SELECT "First name", "Last name" FROM prop_tenant_view '
-                 'WHERE "Property ID" = %(prop_id)s')
-        results = self.query(query, {"prop_id": prop_id})
+        results = self.get_record(prop_id)
         first_name, last_name = results[0][0], results[0][1]
         # if the property exists but doesn't have any tenant
         # information, add tenant data to the property
