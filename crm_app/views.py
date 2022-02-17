@@ -210,7 +210,7 @@ class AddPropertyForm(tk.Frame):
             w.LabelInput(officeinfo, 'Number of properties in building',
                          field_spec=fields['Number properties in building Spinbox'])
         self.inputs['Number properties in building'].grid(row=0, column=2)
-        officeinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
+        officeinfo.grid(row=0, column=0, sticky=(tk.W + tk.E))
 
         # property information
         propertyinfo = tk.LabelFrame(self, text='Property information', padx=5, pady=5)
@@ -228,7 +228,7 @@ class AddPropertyForm(tk.Frame):
         self.inputs['City'] = w.LabelInput(propertyinfo, 'City',
                                            field_spec=fields['City'])
         self.inputs['City'].grid(row=0, column=3)
-        propertyinfo.grid(row=2, column=0, sticky=(tk.W + tk.E))
+        propertyinfo.grid(row=1, column=0, sticky=(tk.W + tk.E))
 
         # command section
         command_section = tk.LabelFrame(self, text='Commands', padx=5, pady=5)
@@ -236,7 +236,7 @@ class AddPropertyForm(tk.Frame):
                                        input_class=ttk.Button,
                                        input_var=self.callbacks['on_add_property'])
         self.savebutton.grid(row=0, column=0, padx=10, pady=(10, 0))
-        command_section.grid(row=5, column=0, sticky=(tk.W + tk.E))
+        command_section.grid(row=2, column=0, sticky=(tk.W + tk.E))
 
         # set default tk entry values to empty strings
         self.reset()
