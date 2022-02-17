@@ -172,7 +172,7 @@ class SQLModel:
         # add or update tenant information
         prop_id = record['Property ID']
         results = self.get_record(prop_id)
-        first_name, last_name = results[0][0], results[0][1]
+        first_name, last_name = results[7], results[8]
         # if the property exists but doesn't have any tenant
         # information, add tenant data to the property
         if (first_name is None and last_name is None):
