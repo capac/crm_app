@@ -248,7 +248,8 @@ class Application(tk.Tk):
             updated_property_ids = [record[0] for record in records]
 
         # property form
-        self.deletepropertyform = v.DeletePropertyForm(self.delete_window, self.data_model.fields,
+        self.deletepropertyform = v.DeletePropertyForm(self.delete_window,
+                                                       self.data_model.fields,
                                                        self.callbacks, updated_property_ids)
         self.deletepropertyform.grid(row=0, padx=5, sticky='W')
         self.deletepropertyform.columnconfigure(0, weight=1)
