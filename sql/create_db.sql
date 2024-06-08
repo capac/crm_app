@@ -54,8 +54,8 @@ CREATE VIEW doc_tenant_view AS (
            tn.prop_id AS "Property ID",
            tn.first_name AS "First name",
            tn.last_name AS "Last name",
-           dc.recipient AS "Recipient",
            dc.subject AS "Subject",
+           dc.recipient AS "Recipient",
            dc.date_sent AS "Date sent",
            dc.attachments AS "Attachments"
     FROM documents AS dc
