@@ -5,7 +5,7 @@
 Description
 ===========
 
-This program provides a graphical user interface for the management of tenants in a London letting agency.
+This program provides a graphical user interface for the management of tenants in a letting agency.
 
 Author
 ======
